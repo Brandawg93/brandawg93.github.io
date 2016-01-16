@@ -58,6 +58,7 @@
         
     function main() {
         document.getElementById("start").style.visibility = "hidden";
+        document.getElementById("game").style.visibility = "hidden";        
         canvas = document.createElement("canvas");
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
@@ -112,6 +113,11 @@
         ctx.fill();        
     }
 </script>
-    <button id="start" onclick="main()">Start</button>
+    <div id="game"> 
+        <div id="title">
+            <h1>MISSILE DEFENSE</h1>
+        </div>
+        <img src="Images/Start.png" id="start" onclick="main()" width="100px">Start</img>
+    </div>
 </body>
 </html>
