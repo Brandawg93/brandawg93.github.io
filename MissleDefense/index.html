@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Missle Defense</title>
+    <link rel="stylesheet" type="text/css" href="main.css">
+    <style>
+        canvas {
+            display: block;
+            position: absolute;
+            margin: auto;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+<script>
+    //Constants
+    var WIDTH = 600,
+        HEIGHT = 500,
+        pi = Math.PI;
+    var canvas,
+        ctx,
+        player,
+        ai,
+        mouseX = null,
+        mouseY = null;
+    
+    player = {
+        x: null,
+        y: null,
+        width: 20,
+        height: 20,
+
+        update: function() {
+            this.x = mouseX - player.width/2;
+            this.y = mouseY - player.height/2;
+        },
+        draw: function() {
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.rect(this.x, this.y, player.width, player.height);
+            ctx.closePath();
+            ctx.fill();
+        }
+    };
+    
+    ai = {
+        x: null,
+        y: null,
+        
+        update: function() {},
+        draw: function() {}
+    };
+        
+    function main() {
+        document.getElementById("start").style.visibility = "hidden";
+        canvas = document.createElement("canvas");
+        canvas.width = WIDTH;
+        canvas.height = HEIGHT;
+        ctx = canvas.getContext("2d");
+        document.body.appendChild(canvas);
+        
+        document.addEventListener("mousemove", function(e){
+            mouseX = e.pageX - canvas.getBoundingClientRect().left;
+            mouseY = e.pageY - canvas.getBoundingClientRect().top;
+            player.update();
+            player.draw();
+        });
+        
+        init();
+        
+        var loop = function() {
+            update();
+            draw();
+            
+            window.requestAnimationFrame(loop, canvas);
+        };
+        window.requestAnimationFrame(loop, canvas);
+
+    }
+    function init() {
+        player.x = (WIDTH - player.width)/2;
+        player.y = (HEIGHT - player.height)/2;
+    }
+    function update() {
+        player.update();
+        ai.update();
+    }
+    function draw() {
+        ctx.fillStyle = "#000000";
+        ctx.beginPath();
+        ctx.rect(0,0, WIDTH, HEIGHT);
+        ctx.closePath();
+        ctx.fill();
+        
+        player.draw();
+        ai.draw();
+        
+        ctx.fillStyle = "#cc0000";
+        ctx.beginPath();
+        ctx.fillRect(0, HEIGHT-50, WIDTH, HEIGHT);
+        ctx.closePath();
+        ctx.fill();        
+    }
+</script>
+    <button id="start" onclick="main()">Start</button>
+</body>
+</html>
