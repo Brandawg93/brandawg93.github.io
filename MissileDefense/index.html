@@ -64,19 +64,19 @@
         ctx = canvas.getContext("2d");
         document.body.appendChild(canvas);
         
+        var requestAnimationFrame = window.requestAnimationFrame || 
+                        window.mozRequestAnimationFrame || 
+                        window.webkitRequestAnimationFrame ||
+                        window.msRequestAnimationFrame;
+
+
+        
         document.addEventListener("mousemove", function(e){
             mouseX = e.pageX - canvas.getBoundingClientRect().left;
             mouseY = e.pageY - canvas.getBoundingClientRect().top;
             player.update();
             player.draw();
         });
-        
-        var requestAnimationFrame = window.requestAnimationFrame || 
-                              window.mozRequestAnimationFrame || 
-                              window.webkitRequestAnimationFrame ||
-                              window.msRequestAnimationFrame;
-
-        window.requestAnimationFrame = requestAnimationFrame;
         
         init();
         
