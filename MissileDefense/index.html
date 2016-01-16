@@ -71,22 +71,21 @@
             player.draw();
         });
         
+        var requestAnimationFrame = window.requestAnimationFrame || 
+                              window.mozRequestAnimationFrame || 
+                              window.webkitRequestAnimationFrame ||
+                              window.msRequestAnimationFrame;
+
+        window.requestAnimationFrame = requestAnimationFrame;
+        
         init();
         
         var loop = function() {
             update();
             draw();
-            
-            window.requestAnimationFrame(loop, canvas) || 
-                              window.mozRequestAnimationFrame(loop, canvas) || 
-                              window.webkitRequestAnimationFrame(loop, canvas) ||
-                              window.msRequestAnimationFrame(loop, canvas);
+            requestAnimationFrame(loop, canvas);
         };
-        window.requestAnimationFrame(loop, canvas) || 
-                            window.mozRequestAnimationFrame(loop, canvas) || 
-                            window.webkitRequestAnimationFrame(loop, canvas) ||
-                            window.msRequestAnimationFrame(loop, canvas);
-
+        requestAnimationFrame(loop, canvas);
     }
     function init() {
         player.x = (WIDTH - player.width)/2;
