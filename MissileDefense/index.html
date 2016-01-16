@@ -77,9 +77,15 @@
             update();
             draw();
             
-            window.requestAnimationFrame(loop, canvas);
+            window.requestAnimationFrame(loop, canvas) || 
+                              window.mozRequestAnimationFrame(loop, canvas) || 
+                              window.webkitRequestAnimationFrame(loop, canvas) ||
+                              window.msRequestAnimationFrame(loop, canvas);
         };
-        window.requestAnimationFrame(loop, canvas);
+        window.requestAnimationFrame(loop, canvas) || 
+                            window.mozRequestAnimationFrame(loop, canvas) || 
+                            window.webkitRequestAnimationFrame(loop, canvas) ||
+                            window.msRequestAnimationFrame(loop, canvas);
 
     }
     function init() {
