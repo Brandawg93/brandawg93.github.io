@@ -25,9 +25,9 @@
     var canvas,
         ctx,
         player,
-        ai,
         mouseX = null,
-        mouseY = null;
+        mouseY = null,
+        missiles = [];
     
     player = {
         x: null,
@@ -40,61 +40,93 @@
             this.y = mouseY - player.height/2;
         },
         draw: function() {
-            ctx.fillStyle = "#fff";
+            ctx.fillStyle = "#0066ff";
             ctx.beginPath();
             ctx.rect(this.x, this.y, player.width, player.height);
             ctx.closePath();
             ctx.fill();
+            ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.rect(this.x+2, this.y+2, player.width-4, player.height-4);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.rect(this.x+7, this.y, 6, 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.rect(this.x, this.y+7, 2, 6);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.rect(this.x+7, this.y+18, 6, 2);
+            ctx.closePath();
+            ctx.fill();
+            ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.rect(this.x+18, this.y+7, 2, 6);
+            ctx.closePath();
+            ctx.fill();
+
+        },
+        clear: function() {
+            ctx.fillStyle = "#000000";
+            ctx.beginPath();
+            ctx.rect(this.x-1, this.y-1, player.width+2, player.height+2);
+            ctx.closePath();
+            ctx.fill();
         }
-    };
-    
-    ai = {
-        x: null,
-        y: null,
-        
-        update: function() {},
-        draw: function() {}
     };
         
     function main() {
         document.getElementById("start").style.visibility = "hidden";
-        document.getElementById("game").style.visibility = "hidden";        
-        canvas = document.createElement("canvas");
+        document.getElementById("game").style.visibility = "hidden";  
+        document.getElementById("canvas").style.visibility = "visible";
+        canvas = document.getElementById("canvas");
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
         ctx = canvas.getContext("2d");
-        document.body.appendChild(canvas);
+        //document.body.appendChild(canvas);
         
         var requestAnimationFrame = window.requestAnimationFrame || 
                         window.mozRequestAnimationFrame || 
                         window.webkitRequestAnimationFrame ||
                         window.msRequestAnimationFrame;
-
-
         
         document.addEventListener("mousemove", function(e){
             mouseX = e.pageX - canvas.getBoundingClientRect().left;
             mouseY = e.pageY - canvas.getBoundingClientRect().top;
+            player.clear();
             player.update();
             player.draw();
         });
         
+        document.addEventListener("click", function(e) {
+            createMissile();
+        });
+        
+        //initilize game data
         init();
         
+        //loop through game data
         var loop = function() {
             update();
-            draw();
+            ground();
+            drawMissile();
             requestAnimationFrame(loop, canvas);
         };
         requestAnimationFrame(loop, canvas);
     }
     function init() {
+        draw();
         player.x = (WIDTH - player.width)/2;
         player.y = (HEIGHT - player.height)/2;
     }
     function update() {
         player.update();
-        ai.update();
     }
     function draw() {
         ctx.fillStyle = "#000000";
@@ -103,14 +135,33 @@
         ctx.closePath();
         ctx.fill();
         
-        player.draw();
-        ai.draw();
-        
-        ctx.fillStyle = "#cc0000";
+        ctx.fillStyle = "#66ff66";
         ctx.beginPath();
         ctx.fillRect(0, HEIGHT-50, WIDTH, HEIGHT);
         ctx.closePath();
         ctx.fill();        
+    }
+    function createMissile() {
+        missiles.push([Math.floor((Math.random() * 600) + 1), 0, Math.floor((Math.random() * 600) + 1), 450]);
+    }
+    function drawMissile() {
+            var i = 0;
+            while(missiles[i]) {
+                ctx.strokeStyle = "#cc0000";
+                ctx.beginPath();
+                ctx.moveTo(missiles[i][0], missiles[i][1]);
+                ctx.lineTo(missiles[i][2], missiles[i][3]);
+                ctx.closePath();
+                ctx.stroke();
+                i++;
+            }
+    }    
+    function ground() {
+        ctx.fillStyle = "#66ff66";
+        ctx.beginPath();
+        ctx.fillRect(0, HEIGHT-50, WIDTH, HEIGHT);
+        ctx.closePath();
+        ctx.fill();
     }
 </script>
     <div id="game"> 
@@ -119,5 +170,6 @@
         </div>
         <img src="Images/Start.png" id="start" onclick="main()" width="100px">Start</img>
     </div>
+    <canvas id="canvas"></canvas>
 </body>
 </html>

@@ -2,7 +2,7 @@
     font-family: "8bit"; 
     src: url('8bit.ttf');
 }
-#title{
+#title {
     font-family: "8bit";
     color: orange;
     position: absolute;
@@ -10,13 +10,13 @@
     text-align: center;
     top: 30%;
 }
-#start{
+#start {
     position: absolute;
     left: 250px;
     top: 60%;
 }
 
-#game{
+#game {
     width: 600px;
     height: 500px;
     position: absolute;
@@ -26,4 +26,8 @@
     right: 0;
     margin: auto;
     background-color: black;
+}
+#canvas {
+    visibility: hidden;
+    cursor: none;
 }
