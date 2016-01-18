@@ -245,7 +245,7 @@
         missiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
-            entry.amount += .002;
+            entry.amount += .003;
         });
         missiles = missiles.filter(function(entry) {
             return entry.amount < 1;
@@ -255,7 +255,7 @@
         antiMissiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
-            entry.amount += .002;
+            entry.amount += .01;
             if(entry.amount >= 1) {
                 createCircle(entry.endX-player.width/2, entry.endY-player.height/2);
                 checkCollision(entry.endX, entry.endY);
@@ -314,7 +314,7 @@
 </script>
     <div id="game"> 
         <div id="title">
-            <h1>MISSILE DEFENSE</h1>
+            <h1>MISSILE COMMAND</h1>
         </div>
         <img src="Images/Start.png" id="start" onclick="main()" width="100px">Start</img>
     </div>
