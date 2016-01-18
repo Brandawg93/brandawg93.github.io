@@ -22,6 +22,7 @@
     var WIDTH = window.innerWidth;//600,
         HEIGHT = window.innerHeight;//500,
         GROUND = 50,
+        explosion = new Audio("sounds/EXPLODE1.wav"),
         pi = Math.PI;
     var canvas,
         ctx,
@@ -33,8 +34,8 @@
         mouseY = null,
         missiles = [],
         antiMissiles = [],
-        circles = [];
-    
+        circles = [],
+        circleColor = 0;
     player = {
         x: null,
         y: null,
@@ -185,6 +186,7 @@
         draw();
         player.x = (WIDTH - player.width)/2;
         player.y = (HEIGHT - player.height)/2;
+        
     }
     function update() {
         player.update();
@@ -225,12 +227,18 @@
         });
     }
     function drawCircle() {
-        circles.forEach(function(entry) {
+        circleColor += 1;
+        circles.forEach(function(entry) {           
             ctx.beginPath();
             ctx.arc(entry.startX, entry.startY, entry.radius, 0, 2 * pi, false);
-            ctx.fillStyle = "#fff";
+            if(circleColor % 2) {
+                ctx.fillStyle = "#fff";
+            }
+            else {
+                ctx.fillStyle = "#000000";
+            }
             ctx.closePath();
-            ctx.fill();
+            ctx.fill();            
         });
     }
     function createMissile() {
@@ -257,6 +265,8 @@
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
             entry.amount += .01;
             if(entry.amount >= 1) {
+                explosion.load();
+                explosion.play();
                 createCircle(entry.endX-player.width/2, entry.endY-player.height/2);
                 checkCollision(entry.endX, entry.endY);
             }
@@ -298,10 +308,6 @@
     function checkCollision(currentX, currentY) {
         missiles.forEach(function(entry) {
             antiMissiles.forEach(function(e) {
-                console.log(e.pointX);
-                console.log(e.pointY);
-                console.log(e.endX);
-                console.log(e.endY);
                 if(e.amount >= 1  && entry.pointX >= e.endX-player.width/2 && entry.pointX <= e.endX+player.width && entry.pointY >= e.endY-player.width/2 && entry.pointY <= e.endY+player.height) {
                     missiles = missiles.filter(function(e) {
                         return e.pointX !== entry.pointX && e.pointY !== entry.pointY;
