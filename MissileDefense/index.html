@@ -19,8 +19,9 @@
 <body>
 <script>
     //Constants
-    var WIDTH = 600,
-        HEIGHT = 500,
+    var WIDTH = window.innerWidth;//600,
+        HEIGHT = window.innerHeight;//500,
+        GROUND = 50,
         pi = Math.PI;
     var canvas,
         ctx,
@@ -120,8 +121,8 @@
         document.addEventListener("mousemove", function(e){
             mouseX = e.pageX - canvas.getBoundingClientRect().left;
             mouseY = e.pageY - canvas.getBoundingClientRect().top;
-            if(mouseY > 450 - player.width/2) {
-                mouseY = 450 - player.width/2;
+            if(mouseY > (HEIGHT - GROUND) - player.width/2) {
+                mouseY = (HEIGHT - GROUND) - player.width/2;
             }
             player.update();
             player.draw();
@@ -134,19 +135,15 @@
                 createAntiMissile();
             }
         });
-        touches = 0;
         document.addEventListener("touchstart", function(e) {
             mouseX = e.pageX - canvas.getBoundingClientRect().left;
             mouseY = e.pageY - canvas.getBoundingClientRect().top;
-            if(mouseY > 450 - player.width/2) {
-                mouseY = 450 - player.width/2;
+            if(mouseY > (HEIGHT - GROUND) - player.width/2) {
+                mouseY = (HEIGHT - GROUND) - player.width/2;
             }
             player.update();
             player.draw();
-            touches += 1;
-            if(touches > 1) {
-                createAntiMissile();
-            }
+            createAntiMissile();
         });
         
         w = new Worker("missileTimer.js");
@@ -201,7 +198,7 @@
         
         ctx.fillStyle = "#66ff66";
         ctx.beginPath();
-        ctx.fillRect(0, HEIGHT-50, WIDTH, HEIGHT);
+        ctx.fillRect(0, HEIGHT - GROUND, WIDTH, HEIGHT);
         ctx.closePath();
         ctx.fill();        
     }
@@ -215,7 +212,7 @@
     function updateCircle() {
         circles.forEach(function(entry) {
             entry.radius += 1;
-            if(entry.radius > 20) {
+            if(entry.radius > player.width) {
                 ctx.beginPath();
                 ctx.arc(entry.startX, entry.startY, entry.radius, 0, 2 * pi, false);
                 ctx.fillStyle = "#000000";
@@ -224,7 +221,7 @@
             } 
         });
         circles = circles.filter(function(entry) {
-            return entry.radius <= 20;
+            return entry.radius <= player.width;
         });
     }
     function drawCircle() {
@@ -238,10 +235,10 @@
     }
     function createMissile() {
         var temp = new missile();
-        temp.startX = Math.floor((Math.random() * 600) + 1);
+        temp.startX = Math.floor((Math.random() * WIDTH) + 1);
         temp.startY = 0;
-        temp.endX = Math.floor((Math.random() * 600) + 1);
-        temp.endY = 450;
+        temp.endX = Math.floor((Math.random() * WIDTH) + 1);
+        temp.endY = HEIGHT - GROUND;
         missiles.push(temp);
     }
     function updateMissile() {
@@ -260,7 +257,7 @@
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
             entry.amount += .002;
             if(entry.amount >= 1) {
-                createCircle(entry.endX-10, entry.endY-10);
+                createCircle(entry.endX-player.width/2, entry.endY-player.height/2);
                 checkCollision(entry.endX, entry.endY);
             }
         });
@@ -282,7 +279,7 @@
     function createAntiMissile() {
         var temp = new missile();
         temp.startX = 0;
-        temp.startY = 450;
+        temp.startY = HEIGHT - GROUND;
         temp.endX = player.x + player.width/2;
         temp.endY = player.y + player.height/2;
         antiMissiles.push(temp);
