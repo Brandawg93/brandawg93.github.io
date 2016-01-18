@@ -1,5 +1,5 @@
 function timedCount() {
     postMessage("make");
-    setTimeout("timedCount()", 10);
+    setTimeout("timedCount()", 100);
 }
 timedCount();

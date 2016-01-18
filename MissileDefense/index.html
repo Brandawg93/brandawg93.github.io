@@ -128,6 +128,7 @@
         
         document.addEventListener("click", function(e) {
             createAntiMissile();
+            checkCollision(player.x, player.y);
         });
         
         w = new Worker("missileTimer.js");
@@ -151,7 +152,9 @@
         //loop through game data
         var loop = function() {
             update();
-            ground();
+            //ground();
+            draw();
+            player.draw();
             drawMissile();
             drawAntiMissile();
             requestAnimationFrame(loop, canvas);
@@ -207,32 +210,45 @@
         missiles.push(temp);
     }
     function updateMissile() {
-        i = 0;
-        while(missiles[i]) {
-            entry = missiles[i];
+        missiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
             entry.amount += .002;
             if(entry.amount > 1) {
                 entry.amount = 1;
+                ctx.strokeStyle = "#000000";
+                ctx.beginPath();
+                ctx.moveTo(entry.startX, entry.startY);
+                ctx.lineTo(entry.endX, entry.endY);
+                ctx.lineWidth = 3;
+                ctx.closePath();
+                ctx.stroke();
             }
-            i++;
-        }
+        });
+        missiles = missiles.filter(function(entry) {
+            return entry.amount < 1;
+        });
     }
     function updateAntiMissile() {
-        i = 0;
-        while(antiMissiles[i]) {
-            entry = antiMissiles[i];
+        antiMissiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
             entry.amount += .002;
             if(entry.amount > 1) {
                 createCircle(entry.endX-10, entry.endY-10, new Worker("circleTimer.js"));
                 entry.amount = 1;
-                antiMissiles.pop();
+                ctx.strokeStyle = "#000000";
+                ctx.beginPath();
+                ctx.moveTo(entry.startX, entry.startY);
+                ctx.lineTo(entry.endX, entry.endY);
+                ctx.lineWidth = 3;
+                ctx.closePath();
+                ctx.stroke();
             }
-            i++;
-        }
+        });
+        antiMissiles = antiMissiles.filter(function(entry) {
+            return entry.amount < 1;
+        });
     }
     function drawMissile() {
         missiles.forEach(function(entry) {
@@ -263,7 +279,14 @@
             ctx.closePath();
             ctx.stroke();
         });
-    }    
+    }
+    function checkCollision(currentX, currentY) {
+        missiles.forEach(function(entry) {
+            if(entry.pointX >= currentX && entry.pointX <= currentX+player.width && entry.pointY >= currentY && entry.pointY <= currentY+player.height) {
+                console.log("remove");
+            }
+        });
+    }
     function ground() {
         ctx.fillStyle = "#66ff66";
         ctx.beginPath();
