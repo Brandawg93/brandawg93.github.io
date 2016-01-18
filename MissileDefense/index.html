@@ -134,6 +134,20 @@
                 createAntiMissile();
             }
         });
+        touches = 0;
+        document.addEventListener("touchstart", function(e) {
+            mouseX = e.pageX - canvas.getBoundingClientRect().left;
+            mouseY = e.pageY - canvas.getBoundingClientRect().top;
+            if(mouseY > 450 - player.width/2) {
+                mouseY = 450 - player.width/2;
+            }
+            player.update();
+            player.draw();
+            touches += 1;
+            if(touches > 1) {
+                createAntiMissile();
+            }
+        });
         
         w = new Worker("missileTimer.js");
         w.onmessage = function(e) {
