@@ -88,6 +88,7 @@
         this.pointX = null;
         this.pointY = null;
         this.amount = 0;
+        this.split = false;
     };
     function antiMissile () {
         this.startX = null;
@@ -219,6 +220,17 @@
             ctx.fill();            
         });
     }
+    function splitMissile(currentX, currentY) {
+        var temp = new missile();
+        temp.startX = currentX;
+        temp.startY = currentY;
+        temp.pointX = currentX;
+        temp.pointY = currentY;
+        temp.endX = Math.floor((Math.random() * WIDTH) + 1);
+        temp.endY = HEIGHT - GROUND;
+        temp.split = true;
+        missiles.push(temp);
+    }
     function createMissile() {
         var temp = new missile();
         temp.startX = Math.floor((Math.random() * WIDTH) + 1);
@@ -232,6 +244,13 @@
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
             entry.amount += .003;
+            if(entry.pointY > HEIGHT/2 && entry.split == false) {
+                splitMissile(entry.pointX, entry.pointY);
+                splitMissile(entry.pointX, entry.pointY);
+                entry.split = true;
+            }
+            if(entry.amount >= 1)
+                createCircle(entry.pointX-10, entry.pointY-10);
         });
         missiles = missiles.filter(function(entry) {
             return entry.amount < 1;
