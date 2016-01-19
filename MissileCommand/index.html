@@ -36,7 +36,8 @@
         missiles = [],
         antiMissiles = [],
         circles = [],
-        circleColor = 0;
+        circleColor = 0,
+        missileSpeed = .003;
     player = {
         x: null,
         y: null,
@@ -243,9 +244,8 @@
         missiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
-            entry.amount += .003;
+            entry.amount += missileSpeed;
             if(entry.pointY > HEIGHT/2 && entry.split == false) {
-                splitMissile(entry.pointX, entry.pointY);
                 splitMissile(entry.pointX, entry.pointY);
                 entry.split = true;
             }
