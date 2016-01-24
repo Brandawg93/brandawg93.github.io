@@ -37,7 +37,11 @@
         antiMissiles = [],
         circles = [],
         circleColor = 0,
-        missileSpeed = .003;
+        missileSpeed = .003,
+        score = 0,
+        gameOver = false,
+        firstPlay = true,
+        clicks = 0;
     player = {
         x: null,
         y: null,
@@ -108,67 +112,74 @@
     function main() {
         //hide beginning elements and show game elements
         document.getElementById("start").style.visibility = "hidden";
-        document.getElementById("game").style.visibility = "hidden";  
+        document.getElementById("game").style.visibility = "hidden";
         document.getElementById("canvas").style.visibility = "visible";
         canvas = document.getElementById("canvas");
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
         ctx = canvas.getContext("2d");
-        var requestAnimationFrame = window.requestAnimationFrame || 
+        requestAnimationFrame = window.requestAnimationFrame || 
                         window.mozRequestAnimationFrame || 
                         window.webkitRequestAnimationFrame ||
                         window.msRequestAnimationFrame;      
-        document.addEventListener("mousemove", function(e){
-            mouseX = e.pageX - canvas.getBoundingClientRect().left;
-            mouseY = e.pageY - canvas.getBoundingClientRect().top;
-            if(mouseY > (HEIGHT - GROUND) - player.width/2)
-                mouseY = (HEIGHT - GROUND) - player.width/2;
-            player.update();
-        });
-        clicks = 0;
-        document.addEventListener("click", function(e) {
-            clicks += 1;
-            if(clicks > 1)
+        if(firstPlay == true) {
+            document.addEventListener("mousemove", function(e){
+                mouseX = e.pageX - canvas.getBoundingClientRect().left;
+                mouseY = e.pageY - canvas.getBoundingClientRect().top;
+                if(mouseY > (HEIGHT - GROUND) - player.width/2)
+                    mouseY = (HEIGHT - GROUND) - player.width/2;
+                player.update();
+            });
+            document.addEventListener("click", function(e) {
+                clicks += 1;
+                if(clicks > 1)
+                    createAntiMissile();
+            });
+            document.addEventListener("touchstart", function(e) {
+                mouseX = e.pageX - canvas.getBoundingClientRect().left;
+                mouseY = e.pageY - canvas.getBoundingClientRect().top;
+                if(mouseY > (HEIGHT - GROUND) - player.width/2)
+                    mouseY = (HEIGHT - GROUND) - player.width/2;
+                player.update();
                 createAntiMissile();
-        });
-        document.addEventListener("touchstart", function(e) {
-            mouseX = e.pageX - canvas.getBoundingClientRect().left;
-            mouseY = e.pageY - canvas.getBoundingClientRect().top;
-            if(mouseY > (HEIGHT - GROUND) - player.width/2)
-                mouseY = (HEIGHT - GROUND) - player.width/2;
-            player.update();
-            createAntiMissile();
-        });
-        //These workers help time specific game animations
-        w = new Worker("missileTimer.js");
-        w.onmessage = function(e) {
-            createMissile();
-        };
-        w2 = new Worker("missileLineTimer.js");
-        w2.onmessage = function(e) {
-            updateMissile();
-        };
-        w3 = new Worker("antiMissileLineTimer.js");
-        w3.onmessage = function(e) {
-            updateAntiMissile();
-        };
-        w4 = new Worker("circleTimer.js");
-        w4.onmessage = function(e) {
-            updateCircle();
-        }              
+            });
+            //These workers help time specific game animations
+            w = new Worker("missileTimer.js");
+            w.onmessage = function(e) {
+                createMissile();
+            };
+            w2 = new Worker("missileLineTimer.js");
+            w2.onmessage = function(e) {
+                updateMissile();
+            };
+            w3 = new Worker("antiMissileLineTimer.js");
+            w3.onmessage = function(e) {
+                updateAntiMissile();
+            };
+            w4 = new Worker("circleTimer.js");
+            w4.onmessage = function(e) {
+                updateCircle();
+            }
+        }
         //initilize game data
         init();
         //loop through game data
-        var loop = function() {
+        loop = function() {
             player.update();
             draw();
             player.draw();
             drawMissile();
             drawAntiMissile();
             drawCircle();
+            drawScore();
+            if(gameOver == true) {
+                gameIsOver();
+                return;
+            }
             requestAnimationFrame(loop, canvas);
         };
-        requestAnimationFrame(loop, canvas);
+        if(gameOver == false)
+            requestAnimationFrame(loop, canvas);
     }
     function init() {
         draw();
@@ -249,8 +260,10 @@
                 splitMissile(entry.pointX, entry.pointY);
                 entry.split = true;
             }
-            if(entry.amount >= 1)
+            if(entry.amount >= 1) {
                 createCircle(entry.pointX-10, entry.pointY-10);
+                gameOver = true;
+            }
         });
         missiles = missiles.filter(function(entry) {
             return entry.amount < 1;
@@ -311,6 +324,7 @@
         missiles.forEach(function(entry) {
             antiMissiles.forEach(function(e) {
                 if(e.amount >= 1  && entry.pointX >= e.endX-player.width/2 && entry.pointX <= e.endX+player.width && entry.pointY >= e.endY-player.width/2 && entry.pointY <= e.endY+player.height) {
+                    score += 1;
                     missiles = missiles.filter(function(e) {
                         return e.pointX !== entry.pointX && e.pointY !== entry.pointY;
                     });
@@ -318,13 +332,45 @@
             });
         });
     }
+    function drawScore() {
+        ctx.beginPath();
+        ctx.fillStyle = "#cc0000";
+        ctx.font = "30px 8bit";
+        ctx.fillText(score, WIDTH/2, 50);
+    }
+    function gameIsOver() {
+        ctx.beginPath();
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, WIDTH, HEIGHT);
+        document.getElementById("gameOver").style.visibility = "visible";
+        document.getElementById("score").innerHTML = "Your score is " + score;  
+    }
+    function playAgain() {
+        missiles = [];
+        antiMissiles = [];
+        circles = [];
+        document.getElementById("gameOver").style.visibility = "hidden";
+        gameOver = false;
+        score = 0;
+        firstPlay = false;
+        clicks = 0;
+        main();
+    }
 </script>
     <div id="game"> 
-        <div id="title">
+        <div class="title">
             <h1>MISSILE COMMAND</h1>
         </div>
         <img src="Images/Start.png" id="start" onclick="main()" width="100px">Start</img>
     </div>
     <canvas id="canvas"></canvas>
+    <div id="gameOver"> 
+        <div class="title">
+            <h1>Game Over</h1>
+            <h2 id="score"></h2>
+        </div>
+        <img src="Images/Start.png" id="start" onclick="playAgain()" width="100px">Start</img>
+    </div>
+
 </body>
 </html>

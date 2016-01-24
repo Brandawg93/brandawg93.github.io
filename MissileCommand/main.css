@@ -5,7 +5,7 @@ body {
     font-family: "8bit"; 
     src: url('8bit.ttf');
 }
-#title {
+.title {
     font-family: "8bit";
     color: orange;
     position: absolute;
@@ -20,6 +20,18 @@ body {
 }
 
 #game {    
+    width: 600px;
+    height: 500px;
+    position: absolute;
+    top:0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    background-color: black;
+}
+#gameOver {
+    visibility: hidden;
     width: 600px;
     height: 500px;
     position: absolute;
