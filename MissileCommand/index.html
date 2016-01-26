@@ -114,6 +114,7 @@
         document.getElementById("start").style.visibility = "hidden";
         document.getElementById("game").style.visibility = "hidden";
         document.getElementById("canvas").style.visibility = "visible";
+        document.getElementById("currentScore").style.visibility = "visible";
         canvas = document.getElementById("canvas");
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
@@ -171,7 +172,6 @@
             drawMissile();
             drawAntiMissile();
             drawCircle();
-            drawScore();
             if(gameOver == true) {
                 gameIsOver();
                 return;
@@ -184,7 +184,7 @@
     function init() {
         draw();
         player.x = (WIDTH - player.width)/2;
-        player.y = (HEIGHT - player.height)/2; 
+        player.y = (HEIGHT - player.height)/2;
     }
     function draw() {
         //black background
@@ -325,6 +325,7 @@
             antiMissiles.forEach(function(e) {
                 if(e.amount >= 1  && entry.pointX >= e.endX-player.width/2 && entry.pointX <= e.endX+player.width && entry.pointY >= e.endY-player.width/2 && entry.pointY <= e.endY+player.height) {
                     score += 1;
+                    document.getElementById("currentScore").innerHTML = "Score: " + score;
                     missiles = missiles.filter(function(e) {
                         return e.pointX !== entry.pointX && e.pointY !== entry.pointY;
                     });
@@ -332,17 +333,12 @@
             });
         });
     }
-    function drawScore() {
-        ctx.beginPath();
-        ctx.fillStyle = "#cc0000";
-        ctx.font = "30px 8bit";
-        ctx.fillText(score, WIDTH/2, 50);
-    }
     function gameIsOver() {
         ctx.beginPath();
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
         document.getElementById("gameOver").style.visibility = "visible";
+        document.getElementById("currentScore").style.visibility = "hidden";
         document.getElementById("score").innerHTML = "Your score is " + score;  
     }
     function playAgain() {
@@ -352,6 +348,7 @@
         document.getElementById("gameOver").style.visibility = "hidden";
         gameOver = false;
         score = 0;
+        document.getElementById("currentScore").innerHTML = "Score: " + score;
         firstPlay = false;
         clicks = 0;
         main();
@@ -364,6 +361,7 @@
         <img src="Images/Start.png" id="start" onclick="main()" width="100px">Start</img>
     </div>
     <canvas id="canvas"></canvas>
+    <h3 id="currentScore">Score: 0</h3>
     <div id="gameOver"> 
         <div class="title">
             <h1>Game Over</h1>

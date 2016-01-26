@@ -46,3 +46,11 @@ body {
     visibility: hidden;
     cursor: none;
 }
+
+#currentScore {
+    visibility: hidden;
+    font-family: "8bit";
+    position:absolute;
+    z-index: 1;
+    color: #cc0000;
+}
