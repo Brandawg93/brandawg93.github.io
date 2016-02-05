@@ -4,17 +4,6 @@
     <meta charset="UTF-8">
     <title>Missle Defense</title>
     <link rel="stylesheet" type="text/css" href="main.css">
-    <style>
-        canvas {
-            display: block;
-            position: absolute;
-            margin: auto;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-    </style>
 </head>
 <body>
 <script>
@@ -26,6 +15,7 @@
         pi = Math.PI;
     //global variables
     var canvas,
+        canvas2,
         ctx,
         player,
         missile,
@@ -133,11 +123,16 @@
         document.getElementById("start").style.visibility = "hidden";
         document.getElementById("game").style.visibility = "hidden";
         document.getElementById("canvas").style.visibility = "visible";
+        document.getElementById("canvas2").style.visibility = "visible";
         document.getElementById("currentScore").style.visibility = "visible";
         canvas = document.getElementById("canvas");
+        canvas2 = document.getElementById("canvas2");
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
         ctx = canvas.getContext("2d");
+        canvas2.width = WIDTH;
+        canvas2.height = HEIGHT;
+        ctx2 = canvas2.getContext("2d");
         //using requestAnimationFrame for animations
         requestAnimationFrame = window.requestAnimationFrame || 
                         window.mozRequestAnimationFrame || 
@@ -186,7 +181,8 @@
         //loop through game data
         loop = function() {
             player.update();
-            draw();
+            //draw();
+            clear(0, 0, WIDTH, HEIGHT);
             player.draw();
             drawMissile();
             drawAntiMissile();
@@ -207,17 +203,20 @@
         player.x = (WIDTH - player.width)/2;
         player.y = (HEIGHT - player.height)/2;
     }
+    function clear(x, y, width, height) {
+        ctx.clearRect(x, y, width, height);
+    }
     function draw() {
         //black background
-        ctx.fillStyle = "#000000";
-        ctx.beginPath();
-        ctx.rect(0,0, WIDTH, HEIGHT);
-        ctx.fill();
+        ctx2.fillStyle = "#000000";
+        ctx2.beginPath();
+        ctx2.rect(0,0, WIDTH, HEIGHT);
+        ctx2.fill();
         //yellow floor
-        ctx.fillStyle = "#ffff00";
-        ctx.beginPath();
-        ctx.fillRect(0, HEIGHT - GROUND, WIDTH, HEIGHT);
-        ctx.fill();        
+        ctx2.fillStyle = "#ffff00";
+        ctx2.beginPath();
+        ctx2.fillRect(0, HEIGHT - GROUND, WIDTH, HEIGHT);
+        ctx2.fill();        
     }
     function createCircle(currentX, currentY) {
         //creates a new missile explosion to draw
@@ -407,11 +406,7 @@
     function drawBomb() {
         //draws the bomb
         bombs.forEach(function(entry) {
-            //ctx.beginPath();
             ctx.drawImage(bombImg, bombPic, 0, entry.width, entry.height, entry.x, entry.y, entry.width, entry.height);
-            //ctx.fillStyle = "#cc0000";
-            //ctx.arc(entry.x, entry.y, entry.radius, 0, pi * 2, false);
-            //ctx.fill();
         });
     }
     function checkBallCollision(currentX, currentY) {
@@ -473,8 +468,9 @@
         <img src="Images/Start.png" id="start" onclick="main()" width="100px">Start</img>
     </div>
     <canvas id="canvas">Your browser does not support the canvas tag.</canvas>
+    <canvas id="canvas2">Your browser does not support the canvas tag.</canvas>
     <h3 id="currentScore">Score: 0</h3>
-    <div id="gameOver"> 
+    <div id="gameOver" style="z-index:2"> 
         <div class="title">
             <h1>Game Over</h1>
             <h2 id="score"></h2>
