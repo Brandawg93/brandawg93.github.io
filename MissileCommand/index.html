@@ -44,7 +44,10 @@
         firstPlay = true,
         clicks = 0,
         faster = 1,
-        img;
+        planeImg,
+        bombImg,
+        bombPic,
+        ticker = 0;
     player = {
         x: null,
         y: null,
@@ -98,7 +101,8 @@
     function bomb () {
         this.x = -10;
         this.y = 0;
-        this.radius = 10;
+        this.width = 24;
+        this.height = 40;
     };
    function missile () {
         this.startX = null;
@@ -142,8 +146,10 @@
         //Initilize first play-through
         if(firstPlay == true) {
             plane.y = Math.floor((Math.random() * (HEIGHT/2-GROUND)) + 1);
-            img = new Image();
-            img.src = "Images/plane.png";
+            planeImg = new Image();
+            bombImg = new Image();
+            planeImg.src = "Images/plane.png";
+            bombImg.src = "Images/bomb.png";
             //Event Listeners
             document.addEventListener("mousemove", function(e){
                 mouseX = e.pageX - canvas.getBoundingClientRect().left;
@@ -173,6 +179,7 @@
             setInterval(updatePlane, 1000/60);
             setInterval(updateBomb, 1000/60);
             setInterval(createBomb, 10000);
+            setInterval(changeBomb, 500);
         }
         //initilize game data
         init();
@@ -352,12 +359,12 @@
         //updates plane location and direction
         if(plane.x == WIDTH + (plane.width * 2)) {
             plane.y = Math.floor((Math.random() * (HEIGHT/2-GROUND)) + 1);
-            img.src = "Images/plane_reverse.png";
+            planeImg.src = "Images/plane_reverse.png";
             plane.direction = "left";
         }
         if(plane.x == -(plane.width * 3)) {
             plane.y = Math.floor((Math.random() * (HEIGHT/2-GROUND)) + 1);
-            img.src = "Images/plane.png";
+            planeImg.src = "Images/plane.png";
             plane.direction = "right";
         }
         if(plane.direction == "right")
@@ -367,7 +374,7 @@
     }
     function drawPlane() {
         //draws the plane
-        ctx.drawImage(img, plane.x, plane.y, plane.width, plane.height);
+        ctx.drawImage(planeImg, plane.x, plane.y, plane.width, plane.height);
     }
     function createBomb() {
         if(plane.x > 0 && plane.x < WIDTH - plane.width) {
@@ -381,23 +388,32 @@
         bombs.forEach(function(entry) {
             if(entry.x == -10)
                 entry.y = -10;
-            if(entry.y < HEIGHT-GROUND-entry.radius)
+            if(entry.y < HEIGHT-GROUND-entry.height)
                 entry.y += 1;
             else
                 gameOver = true;
         });
     }
+    function changeBomb() {
+        if(ticker % 2 == 0)
+            bombPic = 0;
+        else
+            bombPic = 24;
+        ticker += 1;
+    }
     function drawBomb() {
         bombs.forEach(function(entry) {
-            ctx.beginPath();
-            ctx.fillStyle = "#cc0000";
-            ctx.arc(entry.x, entry.y, entry.radius, 0, pi * 2, false);
-            ctx.fill();
+            //ctx.beginPath();
+            ctx.drawImage(bombImg, bombPic, 0, entry.width, entry.height, entry.x, entry.y, entry.width, entry.height);
+            //ctx.fillStyle = "#cc0000";
+            //ctx.arc(entry.x, entry.y, entry.radius, 0, pi * 2, false);
+            //ctx.fill();
         });
     }
     function checkBallCollision(currentX, currentY) {
         bombs.forEach(function(entry) {
-            if(entry.x >= currentX-player.width/2 && entry.x <= currentX+player.width/2 && entry.y >= currentY-player.width/2 && entry.y <= currentY+player.height/2) {
+            //if(entry.x >= currentX-player.width/2 && entry.x <= currentX+player.width/2 && entry.y >= currentY-player.width/2 && entry.y <= currentY+player.height/2) {
+            if(currentX > entry.x && currentX < entry.x + entry.width && currentY > entry.y && currentY < entry.y + entry.height) {
                 score += 1;
                 document.getElementById("currentScore").innerHTML = "Score: " + score;
                 bombs = bombs.filter(function(e) {
@@ -441,7 +457,7 @@
         clicks = 0;
         faster = 1;
         plane.x = -(plane.width * 2);
-        img.src = "Images/plane.png";
+        planeImg.src = "Images/plane.png";
         bomb.x = -10;
         main();
     }
