@@ -377,6 +377,7 @@
         ctx.drawImage(planeImg, plane.x, plane.y, plane.width, plane.height);
     }
     function createBomb() {
+        //creates bomb to draw
         if(plane.x > 0 && plane.x < WIDTH - plane.width) {
             var temp = new bomb();
             temp.x = plane.x + plane.width/2;
@@ -385,6 +386,7 @@
         }
     }
     function updateBomb() {
+        //updates bomb location
         bombs.forEach(function(entry) {
             if(entry.x == -10)
                 entry.y = -10;
@@ -395,6 +397,7 @@
         });
     }
     function changeBomb() {
+        //changes bomb picture
         if(ticker % 2 == 0)
             bombPic = 0;
         else
@@ -402,6 +405,7 @@
         ticker += 1;
     }
     function drawBomb() {
+        //draws the bomb
         bombs.forEach(function(entry) {
             //ctx.beginPath();
             ctx.drawImage(bombImg, bombPic, 0, entry.width, entry.height, entry.x, entry.y, entry.width, entry.height);
@@ -411,8 +415,8 @@
         });
     }
     function checkBallCollision(currentX, currentY) {
+        //checks to see if bomb was hit
         bombs.forEach(function(entry) {
-            //if(entry.x >= currentX-player.width/2 && entry.x <= currentX+player.width/2 && entry.y >= currentY-player.width/2 && entry.y <= currentY+player.height/2) {
             if(currentX > entry.x && currentX < entry.x + entry.width && currentY > entry.y && currentY < entry.y + entry.height) {
                 score += 1;
                 document.getElementById("currentScore").innerHTML = "Score: " + score;
