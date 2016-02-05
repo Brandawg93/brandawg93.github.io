@@ -91,7 +91,8 @@
         x: -100,
         y: 0,
         width: 50,
-        height: 50
+        height: 50,
+        direction: "right"
     };
    function missile () {
         this.startX = null;
@@ -127,14 +128,17 @@
         canvas.width = WIDTH;
         canvas.height = HEIGHT;
         ctx = canvas.getContext("2d");
+        //using requestAnimationFrame for animations
         requestAnimationFrame = window.requestAnimationFrame || 
                         window.mozRequestAnimationFrame || 
                         window.webkitRequestAnimationFrame ||
-                        window.msRequestAnimationFrame;      
+                        window.msRequestAnimationFrame;
+        //Initilize first play-through
         if(firstPlay == true) {
             plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
             img = new Image();
             img.src = "Images/plane.png";
+            //Event Listeners
             document.addEventListener("mousemove", function(e){
                 mouseX = e.pageX - canvas.getBoundingClientRect().left;
                 mouseY = e.pageY - canvas.getBoundingClientRect().top;
@@ -155,23 +159,11 @@
                 player.update();
                 createAntiMissile();
             });
-            //These workers help time specific game animations
-            w = new Worker("missileTimer.js");
-            w.onmessage = function(e) {
-                createMissile();
-            };
-            w2 = new Worker("missileLineTimer.js");
-            w2.onmessage = function(e) {
-                updateMissile();
-            };
-            w3 = new Worker("antiMissileLineTimer.js");
-            w3.onmessage = function(e) {
-                updateAntiMissile();
-            };
-            w4 = new Worker("circleTimer.js");
-            w4.onmessage = function(e) {
-                updateCircle();
-            }
+            //These intervals help time specific game animations
+            setInterval(createMissile, 2000);
+            setInterval(updateMissile, 100);
+            setInterval(updateAntiMissile, 1);
+            setInterval(updateCircle, 50);
             setInterval(updatePlane, 1000/60);
         }
         //initilize game data
@@ -205,13 +197,14 @@
         ctx.beginPath();
         ctx.rect(0,0, WIDTH, HEIGHT);
         ctx.fill();
-        //green floor
+        //yellow floor
         ctx.fillStyle = "#ffff00";
         ctx.beginPath();
         ctx.fillRect(0, HEIGHT - GROUND, WIDTH, HEIGHT);
         ctx.fill();        
     }
     function createCircle(currentX, currentY) {
+        //creates a new missile explosion to draw
         var temp = new circle();
         temp.startX = currentX + player.width/2;
         temp.startY = currentY + player.height/2;
@@ -219,6 +212,7 @@
         circles.push(temp);
     }
     function updateCircle() {
+        //updates missile explostion size and color
         circles.forEach(function(entry) {
             entry.radius += 1;
             if(entry.radius > player.width) {
@@ -234,6 +228,7 @@
         });
     }
     function drawCircle() {
+        //draws explosions on the screen
         circleColor += 1;
         circles.forEach(function(entry) {           
             ctx.beginPath();
@@ -246,6 +241,7 @@
         });
     }
     function splitMissile(currentX, currentY) {
+        //if a missile reaches the halfway point, it separates into to missiles
         var temp = new missile();
         temp.startX = currentX;
         temp.startY = currentY;
@@ -257,6 +253,7 @@
         missiles.push(temp);
     }
     function createMissile() {
+        //creates a missile line to draw
         var temp = new missile();
         temp.startX = Math.floor((Math.random() * WIDTH) + 1);
         temp.startY = 0;
@@ -265,6 +262,7 @@
         missiles.push(temp);
     }
     function updateMissile() {
+        //updates missile location
         missiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
@@ -284,6 +282,7 @@
         });
     }
     function updateAntiMissile() {
+        //updates antimissile location
         antiMissiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
@@ -300,6 +299,7 @@
         });
     }
     function drawMissile() {
+        //draws all the missiles
         missiles.forEach(function(entry) {
             ctx.strokeStyle = "#cc0000";
             ctx.beginPath();
@@ -317,6 +317,7 @@
         });
     }  
     function createAntiMissile() {
+        //creates antimissile to draw
         var temp = new missile();
         temp.startX = 0;
         temp.startY = HEIGHT - GROUND;
@@ -325,6 +326,7 @@
         antiMissiles.push(temp);
     }
     function drawAntiMissile() {
+        //draws all antimissiles
         antiMissiles.forEach(function(entry) {
             ctx.strokeStyle = "#0066ff";
             ctx.beginPath();
@@ -335,30 +337,40 @@
         });
     }
     function updatePlane() {
-        if(plane.x == WIDTH) {
-            plane.x = -(plane.width * 2);
+        //updates plane location and direction
+        if(plane.x == WIDTH + (plane.width * 2)) {
             plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
+            img.src = "Images/plane_reverse.png";
+            plane.direction = "left";
         }
-        plane.x += 1;
-        
+        if(plane.x == -(plane.width * 3)) {
+            plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
+            img.src = "Images/plane.png";
+            plane.direction = "right";
+        }
+        if(plane.direction == "right")
+            plane.x += 1;
+        else
+            plane.x -= 1;
     }
     function drawPlane() {
+        //draws the plane
         ctx.drawImage(img, plane.x, plane.y, plane.width, plane.height);
     }
     function checkCollision(currentX, currentY) {
+        //checks for collision between missile and antimissile
         missiles.forEach(function(entry) {
-            antiMissiles.forEach(function(e) {
-                if(e.amount >= 1  && entry.pointX >= e.endX-player.width/2 && entry.pointX <= e.endX+player.width && entry.pointY >= e.endY-player.width/2 && entry.pointY <= e.endY+player.height) {
-                    score += 1;
-                    document.getElementById("currentScore").innerHTML = "Score: " + score;
-                    missiles = missiles.filter(function(e) {
-                        return e.pointX !== entry.pointX && e.pointY !== entry.pointY;
-                    });
-                }
-            });
+            if(entry.pointX >= currentX-player.width/2 && entry.pointX <= currentX+player.width && entry.pointY >= currentY-player.width/2 && entry.pointY <= currentY+player.height) {
+                score += 1;
+                document.getElementById("currentScore").innerHTML = "Score: " + score;
+                missiles = missiles.filter(function(e) {
+                    return e.pointX !== entry.pointX && e.pointY !== entry.pointY;
+                });
+            }
         });
     }
     function gameIsOver() {
+        //hides canvas and displays final score
         ctx.beginPath();
         ctx.fillStyle = "black";
         ctx.fillRect(0, 0, WIDTH, HEIGHT);
@@ -367,6 +379,7 @@
         document.getElementById("score").innerHTML = "Your score is " + score;  
     }
     function playAgain() {
+        //resets certain data to play again
         missiles = [];
         antiMissiles = [];
         circles = [];
@@ -378,6 +391,7 @@
         clicks = 0;
         faster = 1;
         plane.x = -(plane.width * 2);
+        img.src = "Images/plane.png";
         main();
     }
 </script>
@@ -387,7 +401,7 @@
         </div>
         <img src="Images/Start.png" id="start" onclick="main()" width="100px">Start</img>
     </div>
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas">Your browser does not support the canvas tag.</canvas>
     <h3 id="currentScore">Score: 0</h3>
     <div id="gameOver"> 
         <div class="title">
@@ -396,6 +410,5 @@
         </div>
         <img src="Images/Start.png" id="start" onclick="playAgain()" width="100px">Start</img>
     </div>
-
 </body>
 </html>
