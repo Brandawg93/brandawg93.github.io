@@ -41,7 +41,9 @@
         score = 0,
         gameOver = false,
         firstPlay = true,
-        clicks = 0;
+        clicks = 0,
+        faster = 1,
+        img;
     player = {
         x: null,
         y: null,
@@ -85,6 +87,12 @@
             ctx.fill();
         }
     };
+    plane = {
+        x: -100,
+        y: 0,
+        width: 50,
+        height: 50
+    };
    function missile () {
         this.startX = null;
         this.startY = null;
@@ -124,6 +132,9 @@
                         window.webkitRequestAnimationFrame ||
                         window.msRequestAnimationFrame;      
         if(firstPlay == true) {
+            plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
+            img = new Image();
+            img.src = "Images/plane.png";
             document.addEventListener("mousemove", function(e){
                 mouseX = e.pageX - canvas.getBoundingClientRect().left;
                 mouseY = e.pageY - canvas.getBoundingClientRect().top;
@@ -161,6 +172,7 @@
             w4.onmessage = function(e) {
                 updateCircle();
             }
+            setInterval(updatePlane, 1000/60);
         }
         //initilize game data
         init();
@@ -171,6 +183,7 @@
             player.draw();
             drawMissile();
             drawAntiMissile();
+            drawPlane();
             drawCircle();
             if(gameOver == true) {
                 gameIsOver();
@@ -193,7 +206,7 @@
         ctx.rect(0,0, WIDTH, HEIGHT);
         ctx.fill();
         //green floor
-        ctx.fillStyle = "#66ff66";
+        ctx.fillStyle = "#ffff00";
         ctx.beginPath();
         ctx.fillRect(0, HEIGHT - GROUND, WIDTH, HEIGHT);
         ctx.fill();        
@@ -255,7 +268,8 @@
         missiles.forEach(function(entry) {
             entry.pointX = entry.startX + (entry.endX - entry.startX) * entry.amount;
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
-            entry.amount += missileSpeed;
+            faster += .0007;
+            entry.amount += (missileSpeed * faster);
             if(entry.pointY > HEIGHT/2 && entry.split == false) {
                 splitMissile(entry.pointX, entry.pointY);
                 entry.split = true;
@@ -320,6 +334,17 @@
             ctx.stroke();
         });
     }
+    function updatePlane() {
+        if(plane.x == WIDTH) {
+            plane.x = -(plane.width * 2);
+            plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
+        }
+        plane.x += 1;
+        
+    }
+    function drawPlane() {
+        ctx.drawImage(img, plane.x, plane.y, plane.width, plane.height);
+    }
     function checkCollision(currentX, currentY) {
         missiles.forEach(function(entry) {
             antiMissiles.forEach(function(e) {
@@ -351,6 +376,8 @@
         document.getElementById("currentScore").innerHTML = "Score: " + score;
         firstPlay = false;
         clicks = 0;
+        faster = 1;
+        plane.x = -(plane.width * 2);
         main();
     }
 </script>
