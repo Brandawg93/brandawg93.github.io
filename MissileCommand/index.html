@@ -36,6 +36,7 @@
         missiles = [],
         antiMissiles = [],
         circles = [],
+        bombs = [],
         circleColor = 0,
         missileSpeed = .003,
         score = 0,
@@ -94,6 +95,11 @@
         height: 50,
         direction: "right"
     };
+    function bomb () {
+        this.x = -10;
+        this.y = 0;
+        this.radius = 10;
+    };
    function missile () {
         this.startX = null;
         this.startY = null;
@@ -117,7 +123,7 @@
         this.startX = null;
         this.startY = null;
         this.radius = null;
-    }    
+    }
     function main() {
         //hide beginning elements and show game elements
         document.getElementById("start").style.visibility = "hidden";
@@ -135,7 +141,7 @@
                         window.msRequestAnimationFrame;
         //Initilize first play-through
         if(firstPlay == true) {
-            plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
+            plane.y = Math.floor((Math.random() * (HEIGHT/2-GROUND)) + 1);
             img = new Image();
             img.src = "Images/plane.png";
             //Event Listeners
@@ -165,6 +171,8 @@
             setInterval(updateAntiMissile, 1);
             setInterval(updateCircle, 50);
             setInterval(updatePlane, 1000/60);
+            setInterval(updateBomb, 1000/60);
+            setInterval(createBomb, 10000);
         }
         //initilize game data
         init();
@@ -176,6 +184,7 @@
             drawMissile();
             drawAntiMissile();
             drawPlane();
+            drawBomb();
             drawCircle();
             if(gameOver == true) {
                 gameIsOver();
@@ -212,7 +221,7 @@
         circles.push(temp);
     }
     function updateCircle() {
-        //updates missile explostion size and color
+        //updates missile explosion size and color
         circles.forEach(function(entry) {
             entry.radius += 1;
             if(entry.radius > player.width) {
@@ -288,10 +297,13 @@
             entry.pointY = entry.startY + (entry.endY - entry.startY) * entry.amount;
             entry.amount += .01;
             if(entry.amount >= 1) {
-                explosion.load();
-                explosion.play();
+                if(gameOver == false) {
+                    explosion.load();
+                    explosion.play();    
+                }
                 createCircle(entry.endX-player.width/2, entry.endY-player.height/2);
                 checkCollision(entry.endX, entry.endY);
+                checkBallCollision(entry.endX, entry.endY);
             }
         });
         antiMissiles = antiMissiles.filter(function(entry) {
@@ -339,12 +351,12 @@
     function updatePlane() {
         //updates plane location and direction
         if(plane.x == WIDTH + (plane.width * 2)) {
-            plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
+            plane.y = Math.floor((Math.random() * (HEIGHT/2-GROUND)) + 1);
             img.src = "Images/plane_reverse.png";
             plane.direction = "left";
         }
         if(plane.x == -(plane.width * 3)) {
-            plane.y = Math.floor((Math.random() * (HEIGHT-GROUND-plane.height)) + 1);
+            plane.y = Math.floor((Math.random() * (HEIGHT/2-GROUND)) + 1);
             img.src = "Images/plane.png";
             plane.direction = "right";
         }
@@ -357,10 +369,47 @@
         //draws the plane
         ctx.drawImage(img, plane.x, plane.y, plane.width, plane.height);
     }
+    function createBomb() {
+        if(plane.x > 0 && plane.x < WIDTH - plane.width) {
+            var temp = new bomb();
+            temp.x = plane.x + plane.width/2;
+            temp.y = plane.y + plane.width/2;
+            bombs.push(temp);
+        }
+    }
+    function updateBomb() {
+        bombs.forEach(function(entry) {
+            if(entry.x == -10)
+                entry.y = -10;
+            if(entry.y < HEIGHT-GROUND-entry.radius)
+                entry.y += 1;
+            else
+                gameOver = true;
+        });
+    }
+    function drawBomb() {
+        bombs.forEach(function(entry) {
+            ctx.beginPath();
+            ctx.fillStyle = "#cc0000";
+            ctx.arc(entry.x, entry.y, entry.radius, 0, pi * 2, false);
+            ctx.fill();
+        });
+    }
+    function checkBallCollision(currentX, currentY) {
+        bombs.forEach(function(entry) {
+            if(entry.x >= currentX-player.width/2 && entry.x <= currentX+player.width/2 && entry.y >= currentY-player.width/2 && entry.y <= currentY+player.height/2) {
+                score += 1;
+                document.getElementById("currentScore").innerHTML = "Score: " + score;
+                bombs = bombs.filter(function(e) {
+                    return e.x !== entry.x && e.y !== entry.y;
+                });
+            }
+        });
+    }
     function checkCollision(currentX, currentY) {
         //checks for collision between missile and antimissile
         missiles.forEach(function(entry) {
-            if(entry.pointX >= currentX-player.width/2 && entry.pointX <= currentX+player.width && entry.pointY >= currentY-player.width/2 && entry.pointY <= currentY+player.height) {
+            if(entry.pointX >= currentX-player.width/2 && entry.pointX <= currentX+player.width/2 && entry.pointY >= currentY-player.width/2 && entry.pointY <= currentY+player.height/2) {
                 score += 1;
                 document.getElementById("currentScore").innerHTML = "Score: " + score;
                 missiles = missiles.filter(function(e) {
@@ -383,6 +432,7 @@
         missiles = [];
         antiMissiles = [];
         circles = [];
+        bombs = [];
         document.getElementById("gameOver").style.visibility = "hidden";
         gameOver = false;
         score = 0;
@@ -392,6 +442,7 @@
         faster = 1;
         plane.x = -(plane.width * 2);
         img.src = "Images/plane.png";
+        bomb.x = -10;
         main();
     }
 </script>
