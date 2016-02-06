@@ -308,8 +308,6 @@
                     createCircle(entry.endX-player.width/2, entry.endY-player.height/2);
                     checkCollision(entry.endX, entry.endY);
                     checkBallCollision(entry.endX, entry.endY);
-                    antiMissiles = antiMissiles.filter(function(entry) {
-                    });
                 }
             }
             else {
@@ -321,10 +319,14 @@
                     createCircle(entry.endX-player.width/2, entry.endY-player.height/2);
                     checkCollision(entry.endX, entry.endY);
                     checkBallCollision(entry.endX, entry.endY);
-                    antiMissiles = antiMissiles.filter(function(entry) {
-                    });
                 }
             }
+        });
+        antiMissiles = antiMissiles.filter(function(entry) {
+            if(entry.endX <= WIDTH/2)
+                return entry.pointX < entry.endX;
+            else
+                return entry.pointX > entry.endX;
         });
     }
     function drawMissile() {
@@ -431,8 +433,7 @@
             if(currentX > entry.x && currentX < entry.x + entry.width && currentY > entry.y && currentY < entry.y + entry.height) {
                 score += 1;
                 document.getElementById("currentScore").innerHTML = "Score: " + score;
-                bombs = bombs.filter(function(e) {
-                    return e.x !== entry.x && e.y !== entry.y;
+                bombs = bombs.filter(function(entry) {
                 });
             }
         });
