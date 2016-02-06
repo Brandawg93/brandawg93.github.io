@@ -1,0 +1,43 @@
+Brandon McFarlin
+CSCI4070
+Project 1
+Grading
+
+Definition of Game Objects:
+Missiles
+Anti-Missiles
+Player
+Plane
+Bombs
+Explosions
+
+Animation of Game Objects:
+Moving Missiles
+Moving Antimissiles
+Moving player target
+Flying plane
+Dropping bombs
+Animated explosions
+
+Interaction between Game Objects:
+If missile hits anti-missile, an explosion happens
+If missile hits bomb, an explosion happens
+If missile or bomb hit ground, game is over
+
+Keeping Score (Some objective):
+Score increments for every missile or bomb hit
+
+Complexity:
+Game has mousemove, mouseclick, and touch listeners
+Game fully works on mobile devices
+Game has animated items
+Game has custom drawn images
+Game allows for play again
+
+Documentation / Files:
+Readme file is included and contains list of needed files to run
+All methods and other important items are commented in code
+
+Demo:
+brandawg93.github.io is address to webpage hosting this project
+Will be using Chrome for demo
