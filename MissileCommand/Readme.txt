@@ -2,6 +2,8 @@ Brandon McFarlin
 CSCI 4070
 Project 1 Readme
 
+NOTE: This game runs best on Chrome
+
 Files needed to run:
 8bit.ttf
 Images/bomb.png
