@@ -25,6 +25,13 @@ ig.module(
             }
         },
         update: function() {
+            var player = ig.game.getEntitiesByType( EntityPlayer )[0];
+            var target = 0;
+            if(player)
+                target = player.pos.x;
+            var xdir;
+            var ydir = 10;
+            
             //near an edge? return!
             if((!ig.game.collisionMap.getTile(
                 this.pos.x + (this.flip ? + 4 : this.size.x - 4),
@@ -33,29 +40,20 @@ ig.module(
             ) {
                 this.flip = !this.flip;
             }
-            var player = ig.game.getEntitiesByType( EntityPlayer )[0];
-            var target = 0;
-            if(player)
-                target = player.pos.x;
-            var xdir;
-            var ydir = 10;
 
             if(Math.abs(target - this.pos.x) < 100) {
                 if(target < this.pos.x) {
-                    xdir = -1;
                     this.flip = true;
                 } else {
-                    xdir = 1;
                     this.flip = false;
                 }
 
 
-            } else {
-                xdir = this.flip ? -1 : 1;
             }
+            xdir = this.flip ? -1 : 1;
             this.vel.x = this.speed * xdir;
             this.currentAnim.flip.x = this.flip;
-            
+                        
             //water
             if(this.pos.x > 623 && this.pos.x < 945 && this.pos.y > 1376 && this.pos.y < 1489) {
                 this.kill();

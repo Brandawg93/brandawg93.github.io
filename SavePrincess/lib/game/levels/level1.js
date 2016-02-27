@@ -1,17 +1,27 @@
 ig.module( 'game.levels.level1' )
-.requires( 'impact.image','game.entities.self','game.entities.snowman','game.entities.trigger','game.entities.debris','game.entities.levelchange','game.entities.drawbridge','game.entities.player','game.entities.hud' )
+.requires( 'impact.image','game.entities.trigger','game.entities.self','game.entities.debris','game.entities.snowman','game.entities.levelchange','game.entities.drawbridge','game.entities.player','game.entities.hud' )
 .defines(function(){
 LevelLevel1=/*JSON[*/{
 	"entities": [
 		{
+			"type": "EntityTrigger",
+			"x": 1088,
+			"y": 1344,
+			"settings": {
+				"size": {
+					"x": 16,
+					"y": 32
+				},
+				"target": {
+					"1": "nextLevel",
+					"2": "debris"
+				}
+			}
+		},
+		{
 			"type": "EntitySelf",
 			"x": 1092,
 			"y": 1266
-		},
-		{
-			"type": "EntitySnowman",
-			"x": 484,
-			"y": 1362
 		},
 		{
 			"type": "EntityTrigger",
@@ -47,19 +57,9 @@ LevelLevel1=/*JSON[*/{
 			"y": 1362
 		},
 		{
-			"type": "EntityTrigger",
-			"x": 1088,
-			"y": 1344,
-			"settings": {
-				"size": {
-					"x": 16,
-					"y": 32
-				},
-				"target": {
-					"1": "nextLevel",
-					"2": "debris"
-				}
-			}
+			"type": "EntitySnowman",
+			"x": 484,
+			"y": 1362
 		},
 		{
 			"type": "EntitySnowman",
@@ -82,7 +82,7 @@ LevelLevel1=/*JSON[*/{
 			"y": 1368,
 			"settings": {
 				"name": "nextLevel",
-				"level": "level3"
+				"level": "level2"
 			}
 		},
 		{

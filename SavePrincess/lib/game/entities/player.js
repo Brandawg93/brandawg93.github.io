@@ -112,7 +112,7 @@ ig.module(
                 }
             }
             //slam animation
-            if(slam && this.accel.y == 0) {
+            if(slam && this.standing) {
                 ig.game.spawnEntity(EntitySlamExplosion, this.pos.x, this.pos.y, {colorOffset: 1});
                 slam = false;
             }
@@ -216,16 +216,15 @@ ig.module(
                 var x = this.startPosition.x;
                 var y = this.startPosition.y;
             ig.game.spawnEntity(EntityDeathExplosion, this.pos.x, this.pos.y, {callBack: this.onDeath(x, y)});
-            //ig.game.respawnPosition = this.startPosition;
-            //ig.game.spawnEntity(EntityDeathExplosion, this.pos.x, this.pos.y, {callback:this.onDeath} );
         },
         onDeath: function(x, y) {
             ig.game.lives --;
             if(ig.game.lives <= 0) {
                 ig.game.gameOver();
             } else {
-                ig.game.spawnEntity(EntityPlayer, x, y)
-                //ig.game.spawnEntity(EntityPlayer, //ig.game.respawnPosition.x, ig.game.respawnPosition.y);
+                setTimeout(function() {
+                    ig.game.spawnEntity(EntityPlayer, x, y)
+                }, 1000);
             }
         },
     });
