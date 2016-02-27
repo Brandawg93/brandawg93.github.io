@@ -38,6 +38,10 @@ ig.module(
             } else if(lives == 1) {
                 this.currentAnim = this.anims.one;
             }
+            var player = ig.game.getEntitiesByType( EntityPlayer )[0];
+            if(player) {
+                this.currentAnim.alpha = (player.health / 10);
+            }
             this.parent();
         },
     });
