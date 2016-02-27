@@ -1,0 +1,32 @@
+Brandon McFarlin
+CSCI 4070
+Project 2
+Grading
+
+Levels
+	Has 3 levels
+	First level has parallax
+	Last level is top down
+	Has several splash screens
+	All levels designed by myself
+	Has solid plot of saving the ice princess
+	Is beyond the tutorial baseline
+	Art work is consistent and well crafted
+	Self portrait is on top of tower in level 1
+Sprites
+	Main player is a knight
+	He can run (left or right)
+	He can fall
+	He can jump (space)
+	He can swim
+	He can fly (F)
+	He can climb (wall direction + up)
+	Has friendly sprites (self and princess)
+	Has static enemy sprites (penguins)
+	Has dynamic enemy sprites (snowmen)
+	Has three types of attacks
+		throw snowballs (c)
+		pound the ground (double jump + down)
+		jump on heads
+	Has number of lives in top left corner
+	Health is modeled by alpha of hearts
