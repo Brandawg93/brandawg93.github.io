@@ -10,7 +10,6 @@ ig.module(
         size: {x: 8, y: 16},
         offset: {x: 4, y: 0},
         flip: false,
-        //friction: {x: 150, y:0},
         speed: 14,
         zIndex: 0,
         type: ig.Entity.TYPE.B,
@@ -42,11 +41,10 @@ ig.module(
             }
 
             if(Math.abs(target - this.pos.x) < 100) {
-                if(target < this.pos.x) {
+                if(target < this.pos.x)
                     this.flip = true;
-                } else {
+                else
                     this.flip = false;
-                }
 
 
             }
@@ -55,9 +53,8 @@ ig.module(
             this.currentAnim.flip.x = this.flip;
                         
             //water
-            if(this.pos.x > 623 && this.pos.x < 945 && this.pos.y > 1376 && this.pos.y < 1489) {
+            if(this.pos.x > 623 && this.pos.x < 945 && this.pos.y > 1376 && this.pos.y < 1489)
                 this.kill();
-            }
             
             //topdown
             if(this.pos.x > 2192 && this.pos.x + this.size.x < 2465 && this.pos.y > 128 && this.pos.y + this.size.y < 416) {
@@ -66,11 +63,10 @@ ig.module(
                 if(player)
                     target = player.pos.y;
                 if(Math.abs(target - this.pos.y) < 100) {
-                    if(target < this.pos.y) {
+                    if(target < this.pos.y)
                         ydir = -1;
-                    } else {
+                    else
                         ydir = 1;
-                    }
                 }
             }
             
@@ -82,11 +78,10 @@ ig.module(
             if(this.pos.x > 2192 && this.pos.x + this.size.x < 2465 && this.pos.y > 128 && this.pos.y + this.size.y < 416) {
                 other.receiveDamage(.1, this);
             } else {
-                if (other.pos.y < this.pos.y - other.size.y + 1){
+                if (other.pos.y < this.pos.y - other.size.y + 1)
                     this.receiveDamage(10, this);
-                } else {
+                else
                     other.receiveDamage(.1, this);
-                }
             }
         },
         handleMovementTrace: function(res) {

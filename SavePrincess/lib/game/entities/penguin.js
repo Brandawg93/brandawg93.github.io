@@ -8,7 +8,6 @@ ig.module(
     EntityPenguin = ig.Entity.extend({
         animSheet: new ig.AnimationSheet( 'media/penguin.png', 11, 16),
         size: {x: 11, y: 16},
-        //offset: {x: 0, y: 2},
         flip: false,
         zIndex: 0,
         type: ig.Entity.TYPE.B,
@@ -42,11 +41,10 @@ ig.module(
             if(this.pos.x > 2192 && this.pos.x + this.size.x < 2465 && this.pos.y > 128 && this.pos.y + this.size.y < 416) {
                 other.receiveDamage(5, this);
             } else {
-                if (other.pos.y < this.pos.y - other.size.y + 1){
+                if (other.pos.y < this.pos.y - other.size.y + 1)
                     this.receiveDamage(10, this);
-                } else {
+                else
                     other.receiveDamage(5, this);
-                }
             }
         },
         kill: function (other) {

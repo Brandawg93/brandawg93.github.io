@@ -26,6 +26,7 @@ ig.module(
                 target = player.pos.x;
             this.currentAnim.pivot.x = 208;
             this.currentAnim.pivot.y = 8;
+            //rotate the drawbridge
             if(Math.abs(target - this.pos.x) < 100) {
                 rotate = true;
                 this.draw();

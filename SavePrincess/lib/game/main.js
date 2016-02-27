@@ -38,6 +38,7 @@ MyGame = ig.Game.extend({
         // screen follows the player
         var player = this.getEntitiesByType( EntityPlayer )[0];
         if( player ) {
+            //splash screens
             if(player.pos.x < 330 && player.pos.y < 250) {
                 this.screen.x = 0;
                 this.screen.y = 0;
@@ -45,6 +46,7 @@ MyGame = ig.Game.extend({
                 this.screen.x = player.pos.x - ig.system.width/2;
                 this.screen.y = player.pos.y - ig.system.height/2;
             }
+            //level 2
             if(player.pos.x > 3000 && this.screen.x < 3057) {
                 this.screen.x = 3056;
             } else if(player.pos.x > 3000 && this.screen.x + ig.system.width > 3775) {

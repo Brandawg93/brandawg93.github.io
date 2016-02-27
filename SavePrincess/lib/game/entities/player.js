@@ -18,9 +18,7 @@ ig.module(
         invincible: true, 
         invincibleDelay: 2, 
         invincibleTimer:null,
-        //startPosition: null,
         maxVel: {x: 100, y: 100},
-        //friction 600 is normal
         friction: {x: 100, y: 0},
         accelGround: 400,
         accelAir: 200,
@@ -58,9 +56,8 @@ ig.module(
                 this.accel.x = 0;
             }
             //jump
-            if(this.standing && ig.input.pressed('jump') && this.gravityFactor == 1 && !water && !topDown) {
+            if(this.standing && ig.input.pressed('jump') && this.gravityFactor == 1 && !water && !topDown)
                 this.vel.y = -this.jump;
-            }
             
             //double jump
             if(this.accelAir && ig.input.pressed('jump') && this.gravityFactor == 1 && !water && !topDown) {
@@ -75,14 +72,12 @@ ig.module(
             }
             
             //shoot
-            if(ig.input.pressed('shoot') && !water) {
+            if(ig.input.pressed('shoot') && !water)
                 ig.game.spawnEntity(EntityBullet, this.pos.x, this.pos.y, {flip:this.flip});
-            }
             
             //fly
-            if(ig.input.state('fly') && !topDown) {
+            if(ig.input.state('fly') && !topDown)
                 this.vel.y += -this.jump;
-            }
             
             //water
             if(this.pos.x > 623 && this.pos.x < 945 && this.pos.y > 1376 && this.pos.y < 1489) {
@@ -90,12 +85,10 @@ ig.module(
                 this.gravityFactor = .01;
                 this.maxVel.y = 15;
                 this.maxVel.x = 10;
-                if(ig.input.state('up')) {
+                if(ig.input.state('up'))
                     this.vel.y -= 1;
-                }
-                else if(ig.input.state('down')) {
+                else if(ig.input.state('down'))
                     this.vel.y += 1;
-                }
             } else {
                 water = false;
                 this.gravityFactor = 1;
@@ -129,12 +122,10 @@ ig.module(
                 topDown = true;
                 this.gravityFactor = 0;
                 this.friction.y = 100;
-                if(ig.input.state('up')) {
+                if(ig.input.state('up'))
                     this.accel.y = -accel;
-                }
-                if(ig.input.state('down')) {
+                if(ig.input.state('down'))
                     this.accel.y = accel;
-                }
                 if(this.vel.y != 0) {
                     this.currentAnim = this.anims.run;
                 }
@@ -153,19 +144,18 @@ ig.module(
                 }
                                 
             } else {
-            //animations
-            if(this.vel.y < 0)
-                this.currentAnim = this.anims.jump;
-            else if(this.vel.y > 0)
-                this.currentAnim = this.anims.fall;
-            else if(this.vel.x != 0)
-                this.currentAnim = this.anims.run;
-            else if(ig.input.state('shoot'))
-                this.currentAnim = this.anims.shoot;
-            else
-                this.currentAnim = this.anims.idle;
+                //animations
+                if(this.vel.y < 0)
+                    this.currentAnim = this.anims.jump;
+                else if(this.vel.y > 0)
+                    this.currentAnim = this.anims.fall;
+                else if(this.vel.x != 0)
+                    this.currentAnim = this.anims.run;
+                else if(ig.input.state('shoot'))
+                    this.currentAnim = this.anims.shoot;
+                else
+                    this.currentAnim = this.anims.idle;
             }
-            
             this.parent();
         },
         makeInvincible: function() {
@@ -188,12 +178,10 @@ ig.module(
                 // IF COLLIDING WITH A WALL DO THIS
                 if(ig.input.state('up')) {
                     this.currentAnim = this.anims.climb;
-                    if(ig.input.state('left')) {
+                    if(ig.input.state('left'))
                         this.currentAnim.flip.x = true;
-                    }
-                    else {
+                    else
                         this.currentAnim.flip.x = false;
-                    }
                     this.gravityFactor = 0;
                     this.friction.y = 600;
                     this.accel.y = -400;
@@ -265,9 +253,8 @@ ig.module(
             this.vel.x = (Math.random() * 2 - 1) * this.vel.x;
             this.vel.y = (Math.random() * 2 - 1) * this.vel.y;
             this.idleTimer = new ig.Timer();
-            if(this.pos.x > 2192 && this.pos.x + this.size.x < 2465 && this.pos.y > 128 && this.pos.y + this.size.y < 416) {
+            if(this.pos.x > 2192 && this.pos.x + this.size.x < 2465 && this.pos.y > 128 && this.pos.y + this.size.y < 416)
                 this.gravityFactor = 0;
-            }
         },
         update: function() {
             if(this.idleTimer.delta() > this.lifetime) {
