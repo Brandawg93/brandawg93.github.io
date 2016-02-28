@@ -17,6 +17,7 @@ MyGame = ig.Game.extend({
     
 	// Load a font
 	font: new ig.Font( 'media/04b03.font.png' ),
+    background: new ig.Image('media/howto.png'),
 	lives: 5,
 	gravity: 300,
 	init: function() {
@@ -31,6 +32,7 @@ MyGame = ig.Game.extend({
         ig.input.bind(ig.KEY.F, 'fly');
         ig.input.bind(ig.KEY.UP_ARROW, 'up');
         ig.input.bind(ig.KEY.DOWN_ARROW, 'down');
+        ig.input.bind(ig.KEY.H, 'help');
         this.screen.y = 1000;
 	},
 	
@@ -69,6 +71,10 @@ MyGame = ig.Game.extend({
 	draw: function() {
 		// Draw all entities and backgroundMaps
 		this.parent();
+        var player = this.getEntitiesByType( EntityPlayer )[0];
+        if(player && player.pos.x < 330 && player.pos.y < 250 && ig.input.state('help')) {
+            this.background.draw(0, 0);
+        }
 		
 		var x = ig.system.width/2,
 			y = ig.system.height/2;
