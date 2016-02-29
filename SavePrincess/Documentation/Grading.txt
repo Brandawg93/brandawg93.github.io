@@ -21,6 +21,7 @@ Sprites
 	He can swim
 	He can fly (F)
 	He can climb (wall direction + up)
+	He can swing (s near the end of rope)
 	Has friendly sprites (self and princess)
 	Has static enemy sprites (penguins)
 	Has dynamic enemy sprites (snowmen)
