@@ -33,6 +33,7 @@ MyGame = ig.Game.extend({
         ig.input.bind(ig.KEY.UP_ARROW, 'up');
         ig.input.bind(ig.KEY.DOWN_ARROW, 'down');
         ig.input.bind(ig.KEY.H, 'help');
+        ig.input.bind(ig.KEY.S, 'swing');
         this.screen.y = 1000;
 	},
 	

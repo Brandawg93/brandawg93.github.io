@@ -1,5 +1,5 @@
 ig.module( 'game.levels.level2' )
-.requires( 'impact.image','game.entities.penguin','game.entities.snowman','game.entities.spike','game.entities.trigger','game.entities.levelchange','game.entities.player','game.entities.hud' )
+.requires( 'impact.image','game.entities.penguin','game.entities.snowman','game.entities.spike','game.entities.trigger','game.entities.levelchange','game.entities.swing','game.entities.player','game.entities.hud' )
 .defines(function(){
 LevelLevel2=/*JSON[*/{
 	"entities": [
@@ -9,9 +9,9 @@ LevelLevel2=/*JSON[*/{
 			"y": 784
 		},
 		{
-			"type": "EntityPenguin",
-			"x": 3564,
-			"y": 784
+			"type": "EntitySnowman",
+			"x": 3484,
+			"y": 1248
 		},
 		{
 			"type": "EntitySnowman",
@@ -29,14 +29,14 @@ LevelLevel2=/*JSON[*/{
 			"y": 784
 		},
 		{
+			"type": "EntityPenguin",
+			"x": 3564,
+			"y": 784
+		},
+		{
 			"type": "EntitySpike",
 			"x": 3408,
 			"y": 1041
-		},
-		{
-			"type": "EntitySnowman",
-			"x": 3484,
-			"y": 1248
 		},
 		{
 			"type": "EntitySnowman",
@@ -74,6 +74,14 @@ LevelLevel2=/*JSON[*/{
 			"settings": {
 				"name": "level3",
 				"level": "level3"
+			}
+		},
+		{
+			"type": "EntitySwing",
+			"x": 3408,
+			"y": 864,
+			"settings": {
+				"partitions": 7
 			}
 		},
 		{
