@@ -157,7 +157,7 @@ ig.module(
                     this.currentAnim = this.anims.idle;
             }
             var swing = ig.game.getEntitiesByType( EntitySwing )[ig.game.getEntitiesByType( EntitySwing ).length - 1];
-            if(ig.input.state('swing') && this.pos.x + this.size.x > swing.pos.x + (Math.sin(swing.currentAnim.angle * -1) * this.size.y) && this.pos.x < swing.pos.x + (Math.sin(swing.currentAnim.angle * -1) * this.size.y) + swing.size.x && this.pos.y + this.size.y > swing.pos.y + (Math.cos(swing.currentAnim.angle * -1) * this.size.y) && this.pos.y < swing.pos.y + (Math.cos(swing.currentAnim.angle * -1) * this.size.y) + swing.size.y) {
+            if(swing && ig.input.state('swing') && this.pos.x + this.size.x > swing.pos.x + (Math.sin(swing.currentAnim.angle * -1) * this.size.y) && this.pos.x < swing.pos.x + (Math.sin(swing.currentAnim.angle * -1) * this.size.y) + swing.size.x && this.pos.y + this.size.y > swing.pos.y + (Math.cos(swing.currentAnim.angle * -1) * this.size.y) && this.pos.y < swing.pos.y + (Math.cos(swing.currentAnim.angle * -1) * this.size.y) + swing.size.y) {
                 this.pos.x = swing.pos.x + (Math.sin(swing.currentAnim.angle * -1) * this.size.y);
                 this.pos.y = swing.pos.y + (Math.cos(swing.currentAnim.angle * -1) * this.size.y);
             }
