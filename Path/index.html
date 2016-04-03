@@ -149,7 +149,6 @@
                                        neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                     neighbor.f = neighbor.g + neighbor.h;
                                 }
-
                             }
             			}
             		}
@@ -370,6 +369,7 @@
                 $("#infoStart").slideDown();
                 $("#infoEnd").slideDown();
                 $("#theRest").slideDown();
+                $("#results").slideUp();
                 environment = getMap();
                 //get largest side
                 var curr = 0;
@@ -467,6 +467,9 @@
                     var heuristic = $("#heuristic").val();
                     $("#theRest").slideUp();
                     path = paths.search(algorithm, heuristic, start, end);
+                    $("#results").slideDown();
+                    $("#numSteps").text(path.length);
+                    $("#finalLength").text(path.length * 10);
                     paths.step(algorithm, heuristic, start, end);
                     //var counter = 0;
                     /*var i = setInterval(function(){
@@ -630,6 +633,12 @@
                     <input id="slider" type="range"  max="3000" value="500">
                     <br />
                     <button id="go" onclick="beginpaths();">GO!</button>
+                </div>
+                <div id="results">
+                    <h4>Final # of Steps</h4>
+                    <p id="numSteps"></p>
+                    <h4>Final Length</h4>
+                    <p id="finalLength"></h4>
                 </div>
                 <div id="buttons">
                     <br />

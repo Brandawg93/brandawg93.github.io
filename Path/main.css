@@ -49,3 +49,9 @@ h2 {
     display: block;
     margin: 0 auto;
 }
+#results h4 {
+    text-align: center;
+}
+#results p {
+    text-align: center;
+}
