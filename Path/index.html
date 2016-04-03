@@ -1,0 +1,643 @@
+<html>
+    <head>
+        <title>Path</title>
+        <link rel="stylesheet" type="text/css" href="main.css">
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script type="text/javascript">
+            var ctx;
+            var environment;
+        	var WIDTH;
+            var HEIGHT;
+            var tileSize = 0;
+            var mouseClicks = 0;
+            var inits = 0;
+            var start;
+            var end;
+            var play = true;
+            var stepF = false;
+            var stepB = false;
+            var fontSize = 0;
+            var canGo = false;
+            var path;
+            var interval;
+            
+            var paths = {
+            	search: function(algorithm, heuristic, start, end) {
+             		var openList = [];
+            		var closedList = [];
+            		openList.push(start);
+            		while(openList.length > 0) {
+             
+            			var lowest = 0;
+            			for(var i = 0; i < openList.length; i++) {
+            				if(openList[i].f < openList[lowest].f)
+                                lowest = i;
+            			}
+            			var currentNode = openList[lowest];
+             
+            			if(currentNode.x == end.x && currentNode.y == end.y) {
+            				var curr = currentNode;
+            				var result = [];
+            				while(curr.parent) {
+            					result.push(curr);
+            					curr = curr.parent;
+            				}
+            				return result.reverse();
+            			}
+             
+                        var index = openList.indexOf(currentNode);
+                        if (index > -1) {
+                            openList.splice(index, 1);
+                        }
+            			closedList.push(currentNode);
+            			var neighbors = paths.neighbors(currentNode);
+             
+            			for(var i = 0; i < neighbors.length; i++) {
+            				var neighbor = neighbors[i];
+                            var inClosedList = false;
+                            for(var j = 0; j < closedList.length; j++) {
+                                if(neighbor == closedList[j])
+                                    inClosedList = true;
+                            }
+            				if(inClosedList || neighbor.isWall) {
+            					continue;
+            				}
+                            if(algorithm == "Dijkstra") {
+                				var currF = currentNode.f + 10;
+                				var bestF = false;
+                 
+                                var inOpenList = false;
+                                for(var j = 0; j < openList.length; j++) {
+                                    if(neighbor == openList[j])
+                                        inOpenList = true;
+                                }
+                                
+                				if(!inOpenList) {
+                					bestF = true;
+                                    if(heuristic == "Manhattan")
+                				        neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    else if(heuristic == "Euclidean")
+                                        neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                					openList.push(neighbor);
+                				}
+                				else if(currF < neighbor.f) {
+                					bestF = true;
+                				}
+                 
+                				if(bestF) {
+                					neighbor.parent = currentNode;
+                					neighbor.f = currF;
+                                    if(heuristic == "Manhattan")
+                                        neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                    else if(heuristic == "Euclidean")
+                                       neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                				}
+                            } else if(algorithm == "A Star") {
+                                var currG = currentNode.g + 10;
+                                var bestG = false;
+                 
+                                var inOpenList = false;
+                                for(var j = 0; j < openList.length; j++) {
+                                    if(neighbor == openList[j])
+                                        inOpenList = true;
+                                }
+                                
+                                if(!inOpenList) {
+                                    bestG = true;
+                                    if(heuristic == "Manhattan")
+                                        neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    else if(heuristic == "Euclidean")
+                                            neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    openList.push(neighbor);
+                                }
+                                else if(currG < neighbor.g) {
+                                    bestG = true;
+                                }
+                 
+                                if(bestG) {
+                                    neighbor.parent = currentNode;
+                                    neighbor.g = currG;
+                                    neighbor.f = neighbor.g + neighbor.h;
+                                }
+                            } else if(algorithm == "Best First") {
+                                var currH = currentNode.h + 10;
+                                var bestH = false;
+                 
+                                var inOpenList = false;
+                                for(var j = 0; j < openList.length; j++) {
+                                    if(neighbor == openList[j])
+                                        inOpenList = true;
+                                }
+                                
+                                if(!inOpenList) {
+                                    bestH = true;
+                                    if(heuristic == "Manhattan")
+                                        neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                    else if(heuristic == "Euclidean")
+                                        neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                    openList.push(neighbor);
+                                }
+                                else if(currH < neighbor.h) {
+                                    bestH = true;
+                                }
+                 
+                                if(bestH) {
+                                    neighbor.parent = currentNode;
+                                    if(heuristic == "Manhattan")
+                                       neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    else if(heuristic == "Euclidean")
+                                       neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    neighbor.f = neighbor.g + neighbor.h;
+                                }
+
+                            }
+            			}
+            		}
+                    //No suitable path
+            		return [];
+            	},
+                step: function(algorithm, heuristic, start, end) {
+                    var openList = [];
+                    var closedList = [];
+                    openList.push(start);
+                    interval = setInterval(function() {
+                        if(play || stepF) {
+                     
+                            var lowest = 0;
+                            for(var i = 0; i < openList.length; i++) {
+                                if(openList[i].f < openList[lowest].f)
+                                    lowest = i;
+                            }
+                            var currentNode = openList[lowest];
+                 
+                            if(currentNode.x == end.x && currentNode.y == end.y) {
+                                var curr = currentNode;
+                                var result = [];
+                                while(curr.parent) {
+                                    result.push(curr);
+                                    curr = curr.parent;
+                                }
+                                for(var counter = 0; counter < path.length; counter++) {
+                                    stroke(path[counter].x, path[counter].y, "yellow");
+                                }
+                                clearInterval(interval);
+                                return result.reverse();
+                            }
+                 
+                            var index = openList.indexOf(currentNode);
+                            if (index > -1) {
+                                openList.splice(index, 1);
+                            }
+                            closedList.push(currentNode);
+                            var neighbors = paths.neighbors(currentNode);
+                 
+                            for(var i = 0; i < neighbors.length; i++) {
+                                var neighbor = neighbors[i];
+                                var inClosedList = false;
+                                for(var j = 0; j < closedList.length; j++) {
+                                    if(neighbor == closedList[j])
+                                        inClosedList = true;
+                                }
+                                if(inClosedList || neighbor.isWall) {
+                                    continue;
+                                }
+                                if(algorithm == "Dijkstra") {
+                                    var currF = currentNode.f + 10;
+                                    var bestF = false;
+                     
+                                    var inOpenList = false;
+                                    for(var j = 0; j < openList.length; j++) {
+                                        if(neighbor == openList[j])
+                                            inOpenList = true;
+                                    }
+                                    
+                                    if(!inOpenList) {
+                                        bestF = true;
+                                        if(heuristic == "Manhattan")
+                                           neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        else if(heuristic == "Euclidean")
+                                            neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        drawText(neighbor.h, neighbor.x + (.85*tileSize), neighbor.y + fontSize);
+                                        openList.push(neighbor);
+                                    }
+                                    else if(currF < neighbor.f) {
+                                        bestF = true;
+                                    }
+                     
+                                    if(bestF) {
+                                        neighbor.parent = currentNode;
+                                        neighbor.f = currF;
+                                        if(heuristic == "Manhattan")
+                                           neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        else if(heuristic == "Euclidean")
+                                           neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        drawText(neighbor.g, neighbor.x, neighbor.y + fontSize);
+                                        drawText(neighbor.g + neighbor.h, neighbor.x + tileSize/2 - fontSize/2, neighbor.y + fontSize + tileSize/2 - fontSize/2);
+                                        stroke(neighbor.x, neighbor.y, "teal");
+                                    }
+                                } else if(algorithm == "A Star") {
+                                    var currG = currentNode.g + 10;
+                                    var bestG = false;
+                     
+                                    var inOpenList = false;
+                                    for(var j = 0; j < openList.length; j++) {
+                                        if(neighbor == openList[j])
+                                            inOpenList = true;
+                                    }
+                                    
+                                    if(!inOpenList) {
+                                        bestG = true;
+                                        if(heuristic == "Manhattan")
+                                            neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        else if(heuristic == "Euclidean")
+                                                neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        drawText(neighbor.h, neighbor.x + (.85*tileSize), neighbor.y + fontSize);
+                                        openList.push(neighbor);
+                                    }
+                                    else if(currG < neighbor.g) {
+                                        bestG = true;
+                                    }
+                     
+                                    if(bestG) {
+                                        neighbor.parent = currentNode;
+                                        if(heuristic == "Manhattan")
+                                            neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        else if(heuristic == "Euclidean")
+                                            neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        drawText(neighbor.g, neighbor.x, neighbor.y + fontSize);
+                                        neighbor.f = neighbor.g + neighbor.h;
+                                        drawText(neighbor.g + neighbor.h, neighbor.x + tileSize/2 - fontSize/2, neighbor.y + fontSize + tileSize/2 - fontSize/2);
+                                        stroke(neighbor.x, neighbor.y, "teal");
+                                    }
+                                } else if(algorithm == "Best First") {
+                                    var currH = currentNode.h + 10;
+                                    var bestH = false;
+                     
+                                    var inOpenList = false;
+                                    for(var j = 0; j < openList.length; j++) {
+                                        if(neighbor == openList[j])
+                                            inOpenList = true;
+                                    }
+                                    
+                                    if(!inOpenList) {
+                                        bestH = true;
+                                        if(heuristic == "Manhattan")
+                                            neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        else if(heuristic == "Euclidean")
+                                            neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        drawText(neighbor.g, neighbor.x, neighbor.y + fontSize);
+                                        openList.push(neighbor);
+                                    }
+                                    else if(currH < neighbor.h) {
+                                        bestH = true;
+                                    }
+                     
+                                    if(bestH) {
+                                        neighbor.parent = currentNode;
+                                        if(heuristic == "Manhattan")
+                                           neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        else if(heuristic == "Euclidean")
+                                           neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        drawText(neighbor.h, neighbor.x + (.85*tileSize), neighbor.y + fontSize);
+                                        neighbor.f = neighbor.g + neighbor.h;
+                                        drawText(neighbor.g + neighbor.h, neighbor.x + tileSize/2 - fontSize/2, neighbor.y + fontSize + tileSize/2 - fontSize/2);
+                                        stroke(neighbor.x, neighbor.y, "teal");
+                                    }
+                                }
+                            }
+                            if(openList.length <= 0) {
+                                clearInterval(interval);
+                            }
+                            stepF = false;
+                        } else if(stepB) {
+                            if(openList[0] != null) {
+                                var temp = openList.pop();
+                                rect(temp.x, temp.y, "black");
+                            }
+                            stepB = false;
+                        }
+                    }, $("#slider").val());
+                    //No suitable path
+                    return [];
+                },
+            	manhattan: function(x1, y1, x2, y2) {
+            		var d1 = Math.abs(x2 - x1);
+            		var d2 = Math.abs(y2 - y1);
+            		return d1 + d2;
+            	},
+                euclidean: function(x1, y1, x2, y2) {
+                    var d1 = Math.abs(x2 - x1);
+                    var d2 = Math.abs(y2 - y1);
+                    return Math.round(Math.sqrt(Math.pow(d2, 2) + Math.pow(d1, 2)) * 10) / 10;
+                },
+            	neighbors: function(node) {
+            		var result = [];
+            		var x = node.indexX;
+            		var y = node.indexY;
+            		if(environment[x - 1] && environment[x - 1][y]) {
+            			result.push(environment[x - 1][y]);
+            		}
+            		if(environment[x + 1] && environment[x + 1][y]) {
+            			result.push(environment[x + 1][y]);
+            		}
+            		if(environment[x][y - 1] && environment[x][y - 1]) {
+            			result.push(environment[x][y - 1]);
+            		}
+            		if(environment[x][y + 1] && environment[x][y + 1]) {
+            			result.push(environment[x][y + 1]);
+            		}
+            		return result;
+            	}
+            };
+                        
+            function node() {
+                this.f = 0;
+                this.g = 0;
+                this.h = 0;
+                this.parent = null;
+                this.val = 0;
+                this.x = 0;
+                this.y = 0;
+                this.isWall = false;
+                this.indexX = 0;
+                this.indexY = 0;
+            }
+
+            function init() {
+                if(interval != null)
+                    clearInterval(interval);
+                mouseClicks = 0;
+                $("#infoStart").slideDown();
+                $("#infoEnd").slideDown();
+                $("#theRest").slideDown();
+                environment = getMap();
+                //get largest side
+                var curr = 0;
+                for(var i = 0; i < environment.length; i++) {
+                    for(var j = 0; j < environment[i].length; j++) {
+                        if(environment[i].length > curr) {
+                            curr = environment[i].length;
+                        }
+                    }
+                    if(environment.length > curr) {
+                        curr = environment.length;
+                    }
+                }
+                ctx = document.getElementById('canvas').getContext('2d');
+                WIDTH = ctx.canvas.width;
+                HEIGHT = ctx.canvas.height;
+                tileSize = Math.round(WIDTH/curr);
+                fontSize = Math.floor(tileSize/10);
+                if(inits == 0) {
+                    document.addEventListener("mousedown", function(e){
+                        mouseX = e.pageX - ctx.canvas.getBoundingClientRect().left;
+                        mouseY = e.pageY - ctx.canvas.getBoundingClientRect().top;
+                        //console.log(x + " " + y);
+                        var canPut = true;
+                        var isValid = false;
+                        for(var i = 0; i < environment.length; i ++) {
+                            for(var j = 0; j < environment[i].length; j++) {
+                                if(environment[i][j].val == 1) {
+                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
+                                        canPut = false;
+                                        x = environment[i][j].x;
+                                        y = environment[i][j].y;
+                                    }
+                                } else if(environment[i][j].val == 0) {
+                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
+                                        isValid = true;
+                                        x = environment[i][j].x;
+                                        y = environment[i][j].y;
+                                    }
+                                }
+                            }
+                        }
+                        if(canPut && isValid) {
+                            if(mouseClicks == 0) {
+                                $("#infoStart").slideUp();
+                                rect(x, y, "green");
+                                start = new node();
+                                start.f = 0;
+                                start.g = 0;
+                                start.h = 0;
+                                start.parent = null;
+                                start.x = x;
+                                start.y = y;
+                                for (var i = 0; i < environment.length; i++) {
+                                    for (var j = 0; j < environment[i].length; j++) {
+                                        if(environment[i][j].x == x && environment[i][j].y == y) {
+                                            start.indexX = environment[i][j].indexX;
+                                            start.indexY = environment[i][j].indexY;
+                                        }
+                                    }
+                                }
+                            }
+                            else if(mouseClicks == 1) {
+                                $("#infoEnd").slideUp();
+                                canGo = true;
+                                rect(x, y, "red");
+                                end = new node();
+                                end.f = 0;
+                                end.g = 0;
+                                end.h = 0;
+                                end.parent = null;
+                                end.x = x;
+                                end.y = y;
+                                for (var i = 0; i < environment.length; i++) {
+                                    for (var j = 0; j < environment[i].length; j++) {
+                                        if(environment[i][j].x == x && environment[i][j].y == y) {
+                                            end.indexX = environment[i][j].indexX;
+                                            end.indexY = environment[i][j].indexY;
+                                        }
+                                    }
+                                }
+                            }
+                            mouseClicks++;
+                        }
+                    });
+                }
+                inits++;
+                draw();
+            }
+            
+            function beginpaths() {
+                if(canGo) {
+                    canGo = false;
+                    var algorithm = $("#algorithm").val();
+                    var heuristic = $("#heuristic").val();
+                    $("#theRest").slideUp();
+                    path = paths.search(algorithm, heuristic, start, end);
+                    paths.step(algorithm, heuristic, start, end);
+                    //var counter = 0;
+                    /*var i = setInterval(function(){
+                        if(play || stepF) {
+                            stroke(path[counter].x, path[counter].y, "yellow");
+                            counter++;
+                            if(counter === path.length) {
+                                clearInterval(i);
+                            }
+                            stepF = false;
+                        } else if(stepB) {
+                            counter--;
+                            rect(path[counter].x, path[counter].y, "black");
+                            stepB = false;
+                        }
+                    }, $("#slider").val());*/
+                }
+            }
+            
+            function getMap() {
+                var temp = $("#environment").val()
+                var array = [];
+                var innerArray = [];
+                for(var i = 0; i <= temp.length; i++) {
+                    if(temp[i] == '\n' || i == temp.length) {
+                        array.push(innerArray);
+                        innerArray = [];
+                    } else if(temp[i] == 'o') {
+                        var temp2 = new node();
+                        temp2.val = 1;
+                        innerArray.push(temp2);
+                    } else if(temp[i] == 'e') {
+                        var temp2 = new node();
+                        temp2.val = 0;
+                        innerArray.push(temp2);
+                    }
+                }
+                return array;
+            }
+            function clear() {
+                ctx.clearRect(0, 0, WIDTH, HEIGHT);
+            }
+            function rect(x,y, color) {
+                ctx.beginPath();
+                ctx.fillStyle = color;
+                ctx.rect(x,y, tileSize, tileSize);
+                ctx.closePath();
+                ctx.fill();
+            }
+            function stroke(x, y, color) {
+                ctx.beginPath();
+                ctx.strokeStyle = color;
+                ctx.moveTo(x, y);
+                ctx.lineTo(x + tileSize, y);
+                ctx.moveTo(x + tileSize, y);
+                ctx.lineTo(x + tileSize, y + tileSize);
+                ctx.moveTo(x + tileSize, y + tileSize);
+                ctx.lineTo(x, y + tileSize);
+                ctx.moveTo(x, y + tileSize);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+                ctx.closePath();
+            }
+            function draw() {
+                clear();
+                var x = 0;
+                var y = 0;
+                for(var i = 0; i < environment.length; i++) {
+                    for(var j = 0; j < environment[i].length; j++) {
+                        if(environment[i][j].val == 1) {
+                            //console.log("blue at: " + (x + j) + ", " + (y + i));
+                            environment[i][j].x = j + x;
+                            environment[i][j].y = i + y;
+                            environment[i][j].isWall = true;
+                            environment[i][j].indexX = i;
+                            environment[i][j].indexY = j;
+                            rect(j + x, i + y, "blue");
+                        } else if(environment[i][j].val == 0) {
+                            //console.log("black at: " + (x + j) + ", " + (y + i));
+                            environment[i][j].x = j + x;
+                            environment[i][j].y = i + y;
+                            environment[i][j].indexX = i;
+                            environment[i][j].indexY = j;
+                            rect(j + x, i + y, "black");
+                        }
+                        x += tileSize;
+                    }
+                    x = 0;
+                    y += tileSize;
+                }
+            }
+            function drawText(text, x, y) {
+                if(tileSize > 70) {
+                    ctx.font = fontSize.toString() + "px Arial";
+                    ctx.fillStyle = "white";
+                    ctx.fillText(text,x,y);
+                }
+            }
+            function generate() {
+                var temp = "";
+                $("#slider").val(0);
+                for(var i = 0; i < 100; i++) {
+                    for(var j = 0; j < 100; j++) {
+                        if(Math.floor((Math.random() * 10) + 1) < 3) {
+                            temp += "o";
+                        }
+                        else {
+                            temp += "e";
+                        }
+                    }
+                    temp += "\n";
+                }
+                $("#environment").val(temp);
+            }
+            function setPlay() {
+                if($("#playAndPause").html() == "Pause") {
+                    $("#playAndPause").html('&nbsp;Play&nbsp;&nbsp;');
+                } else {
+                    $("#playAndPause").html('Pause');
+                }
+                play = !play;
+            }
+            function stepForward() {
+                stepF = true;
+            }
+            function stepBackward() {
+                stepB = true;
+            }
+        </script>
+    </head>
+    <body>
+        <canvas id="canvas" width="600" height="600" style="border-style: solid;">
+        Your browser does not support the canvas element.
+        </canvas>
+        <div id="sidebar">
+            <h2 style="margin:6;">Instructions</h2>
+            <div style="border:solid;">
+                <h3 id="gTitle">Environment</h3>
+                <textarea id="environment" placeholder="Enter environment here..."></textarea>
+                <div id="envButtons">
+                    <button id="submit" onclick="init();">Submit</button>
+                    <button id="random" onclick="generate();">Random</button>
+                </div>
+                <h3 id="infoStart">Please select a start position.</h3>
+                <br />
+                <h3 id="infoEnd">Please select an end position.</h3>
+                <br />
+                <div id="theRest">
+                    <h3>Please select algorithm.</h3>
+                    <select id="algorithm">
+                        <option default selected>A Star</option>
+                        <option>Dijkstra</option>
+                        <option>Best First</option>
+                    </select>
+                    <h3>Please select heuristic.</h3>
+                    <select id="heuristic">
+                        <option default selected>Manhattan</option>
+                        <option>Euclidean</option>
+                    </select>
+                    <h3 id="speed">Speed</h3>
+                    <input id="slider" type="range"  max="3000" value="500">
+                    <br />
+                    <button id="go" onclick="beginpaths();">GO!</button>
+                </div>
+                <div id="buttons">
+                    <br />
+                    <!--<button id="stepBack" onclick="stepBackward();">&lt&lt Step</button>-->
+                    <button id="playAndPause" onclick="setPlay();">Pause</button>
+                    <button id="stepForward" onclick="stepForward();">Step &gt&gt</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

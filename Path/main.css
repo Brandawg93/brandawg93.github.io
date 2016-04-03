@@ -1,0 +1,51 @@
+#sidebar {
+    position: absolute;
+    left: 620px;
+    top: 0px;
+    width: 250px;
+}
+#sidebar h3 {
+    text-align: center;
+}
+#gTitle {
+    text-align: center;
+}
+h2 {
+    text-align: center;
+}
+#environment {
+    width: 100%;
+    height: 100px;
+}
+#buttons {
+    width: 45%;
+    margin: 0 auto;
+}
+#envButtons {
+    width: 48%;
+    margin: 0 auto;
+}
+#infoStart {
+    color: green;
+}
+#infoEnd {
+    color: red;
+}
+#algorithm {
+    width: 80%;
+    display: block;
+    margin: 0 auto;
+}
+#go {
+    font-size: 20;
+    display: block;
+    margin: 0 auto;
+}
+#slider {
+    display: block;
+    margin: 0 auto;
+}
+#heuristic {
+    display: block;
+    margin: 0 auto;
+}
