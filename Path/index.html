@@ -78,6 +78,8 @@
                 				        neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                     else if(heuristic == "Euclidean")
                                         neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    else if(heuristic == "Diagonal")
+                                        neighbor.h = paths.diagonal(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                 					openList.push(neighbor);
                 				}
                 				else if(currF < neighbor.f) {
@@ -91,6 +93,8 @@
                                         neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                     else if(heuristic == "Euclidean")
                                        neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                    else if(heuristic == "Diagonal")
+                                       neighbor.g = paths.diagonal(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                 				}
                             } else if(algorithm == "A Star") {
                                 var currG = currentNode.g + 10;
@@ -108,6 +112,8 @@
                                         neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                     else if(heuristic == "Euclidean")
                                             neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    else if(heuristic == "Diagonal")
+                                            neighbor.h = paths.diagonal(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                     openList.push(neighbor);
                                 }
                                 else if(currG < neighbor.g) {
@@ -135,6 +141,8 @@
                                         neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                     else if(heuristic == "Euclidean")
                                         neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                    else if(heuristic == "Diagonal")
+                                        neighbor.g = paths.diagonal(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                     openList.push(neighbor);
                                 }
                                 else if(currH < neighbor.h) {
@@ -147,6 +155,8 @@
                                        neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                     else if(heuristic == "Euclidean")
                                        neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                    else if(heuristic == "Diagonal")
+                                       neighbor.h = paths.diagonal(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                     neighbor.f = neighbor.g + neighbor.h;
                                 }
                             }
@@ -216,6 +226,8 @@
                                            neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                         else if(heuristic == "Euclidean")
                                             neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        else if(heuristic == "Diagonal")
+                                            neighbor.h = paths.diagonal(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                         drawText(neighbor.h, neighbor.x + (.85*tileSize), neighbor.y + fontSize);
                                         openList.push(neighbor);
                                     }
@@ -230,6 +242,8 @@
                                            neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                         else if(heuristic == "Euclidean")
                                            neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        else if(heuristic == "Diagonal")
+                                           neighbor.g = paths.diagonal(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                         drawText(neighbor.g, neighbor.x, neighbor.y + fontSize);
                                         drawText(neighbor.g + neighbor.h, neighbor.x + tileSize/2 - fontSize/2, neighbor.y + fontSize + tileSize/2 - fontSize/2);
                                         stroke(neighbor.x, neighbor.y, "teal");
@@ -250,6 +264,8 @@
                                             neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                         else if(heuristic == "Euclidean")
                                                 neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        else if(heuristic == "Diagonal")
+                                                neighbor.h = paths.diagonal(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                         drawText(neighbor.h, neighbor.x + (.85*tileSize), neighbor.y + fontSize);
                                         openList.push(neighbor);
                                     }
@@ -263,6 +279,8 @@
                                             neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                         else if(heuristic == "Euclidean")
                                             neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        else if(heuristic == "Diagonal")
+                                            neighbor.g = paths.diagonal(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                         drawText(neighbor.g, neighbor.x, neighbor.y + fontSize);
                                         neighbor.f = neighbor.g + neighbor.h;
                                         drawText(neighbor.g + neighbor.h, neighbor.x + tileSize/2 - fontSize/2, neighbor.y + fontSize + tileSize/2 - fontSize/2);
@@ -284,6 +302,8 @@
                                             neighbor.g = paths.manhattan(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                         else if(heuristic == "Euclidean")
                                             neighbor.g = paths.euclidean(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
+                                        else if(heuristic == "Diagonal")
+                                            neighbor.g = paths.diagonal(neighbor.indexX, neighbor.indexY, start.indexX, start.indexY) * 10;
                                         drawText(neighbor.g, neighbor.x, neighbor.y + fontSize);
                                         openList.push(neighbor);
                                     }
@@ -297,6 +317,8 @@
                                            neighbor.h = paths.manhattan(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                         else if(heuristic == "Euclidean")
                                            neighbor.h = paths.euclidean(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
+                                        else if(heuristic == "Diagonal")
+                                           neighbor.h = paths.diagonal(neighbor.indexX, neighbor.indexY, end.indexX, end.indexY) * 10;
                                         drawText(neighbor.h, neighbor.x + (.85*tileSize), neighbor.y + fontSize);
                                         neighbor.f = neighbor.g + neighbor.h;
                                         drawText(neighbor.g + neighbor.h, neighbor.x + tileSize/2 - fontSize/2, neighbor.y + fontSize + tileSize/2 - fontSize/2);
@@ -328,6 +350,11 @@
                     var d1 = Math.abs(x2 - x1);
                     var d2 = Math.abs(y2 - y1);
                     return Math.round(Math.sqrt(Math.pow(d2, 2) + Math.pow(d1, 2)) * 10) / 10;
+                },
+                diagonal: function (x1, y1, x2, y2) {
+                    var d1 = Math.abs(x2 - x1);
+                    var d2 = Math.abs(y2 - y1);
+                    return (d1 + d2) + (14 - 2 * 10) * Math.min(d1, d2);
                 },
             	neighbors: function(node) {
             		var result = [];
@@ -477,21 +504,6 @@
                         $("#finalLength").text(path.length * 10);
                     }                   
                     paths.step(algorithm, heuristic, start, end);
-                    //var counter = 0;
-                    /*var i = setInterval(function(){
-                        if(play || stepF) {
-                            stroke(path[counter].x, path[counter].y, "yellow");
-                            counter++;
-                            if(counter === path.length) {
-                                clearInterval(i);
-                            }
-                            stepF = false;
-                        } else if(stepB) {
-                            counter--;
-                            rect(path[counter].x, path[counter].y, "black");
-                            stepB = false;
-                        }
-                    }, $("#slider").val());*/
                 }
             }
             
@@ -546,7 +558,6 @@
                 for(var i = 0; i < environment.length; i++) {
                     for(var j = 0; j < environment[i].length; j++) {
                         if(environment[i][j].val == 1) {
-                            //console.log("blue at: " + (x + j) + ", " + (y + i));
                             environment[i][j].x = j + x;
                             environment[i][j].y = i + y;
                             environment[i][j].isWall = true;
@@ -554,7 +565,6 @@
                             environment[i][j].indexY = j;
                             rect(j + x, i + y, "blue");
                         } else if(environment[i][j].val == 0) {
-                            //console.log("black at: " + (x + j) + ", " + (y + i));
                             environment[i][j].x = j + x;
                             environment[i][j].y = i + y;
                             environment[i][j].indexX = i;
@@ -634,6 +644,7 @@
                     <select id="heuristic">
                         <option default selected>Manhattan</option>
                         <option>Euclidean</option>
+                        <option>Diagonal</option>
                     </select>
                     <h3 id="speed">Speed</h3>
                     <input id="slider" type="range"  max="3000" value="500">
