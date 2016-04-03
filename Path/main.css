@@ -18,12 +18,12 @@ h2 {
     height: 100px;
 }
 #buttons {
-    width: 50%;
-    margin: 0 auto;
+    display: inline-block;
+    margin-left: 27%;
 }
 #envButtons {
-    width: 50%;
-    margin: 0 auto;
+    display: inline-block;
+    margin-left: 25%;
 }
 #infoStart {
     color: green;
