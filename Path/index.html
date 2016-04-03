@@ -468,8 +468,14 @@
                     $("#theRest").slideUp();
                     path = paths.search(algorithm, heuristic, start, end);
                     $("#results").slideDown();
-                    $("#numSteps").text(path.length);
-                    $("#finalLength").text(path.length * 10);
+                    if(path.length == 0) {
+                        $("#numSteps").text("None");
+                        $("#finalLength").text("None");
+                    }
+                    else {
+                        $("#numSteps").text(path.length);
+                        $("#finalLength").text(path.length * 10);
+                    }                   
                     paths.step(algorithm, heuristic, start, end);
                     //var counter = 0;
                     /*var i = setInterval(function(){
