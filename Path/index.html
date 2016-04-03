@@ -354,7 +354,7 @@
                 diagonal: function (x1, y1, x2, y2) {
                     var d1 = Math.abs(x2 - x1);
                     var d2 = Math.abs(y2 - y1);
-                    return (d1 + d2) + (14 - 2 * 10) * Math.min(d1, d2);
+                    return Math.round((d1 + d2) + (1.4 - 2) * Math.min(d1, d2));
                 },
             	neighbors: function(node) {
             		var result = [];
