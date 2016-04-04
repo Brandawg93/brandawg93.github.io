@@ -667,7 +667,8 @@
                                         counter++;
                                     } else {
                                         clearInterval(inter2);
-                                        alert("Something went wrong with the custom algorithm!");
+                                        $("#numSteps").text("None");
+                                        $("#finalLength").text("None");
                                     }
                                     stepF = false;
                                 }
@@ -878,6 +879,8 @@
                     <input id="slider" type="range"  max="3000" value="500">
                     <br />
                     <button id="gameify" onclick="setGameify();">GAMEIFY!</button>
+                    <br />
+                    <br />
                     <button id="go" onclick="beginpaths();">GO!</button>
                 </div>
                 <div id="results">
