@@ -22,6 +22,7 @@
             var interval;
             var inter2;
             var inter3;
+            var inter4;
             var gameify = false;
             
             var paths = {
@@ -513,6 +514,8 @@
                 gameify = false;
                 if(inter3 != null)
                     clearInterval(inter3);
+                if(inter4 != null)
+                    clearInterval(inter4);
                 if(interval != null)
                     clearInterval(interval);
                 if(inter2 != null)
@@ -644,6 +647,19 @@
                                             clearInterval(inter2);
                                             for(var i = 0; i < path.length; i++) {
                                                 stroke(path[i].x, path[i].y, "yellow");
+                                            }
+                                            if(gameify) {
+                                                var counter2 = 0;
+                                                inter4 = setInterval(function() {
+                                                    drawPic("floor", start.x, start.y, tileSize);
+                                                    if(counter2 > 0) {
+                                                        drawPic("floor", path[counter2 - 1].x, path[counter2 - 1].y, tileSize);
+                                                    }
+                                                    drawPic("player", path[counter2].x, path[counter2].y, tileSize);
+                                                    if(path[counter2].x == end.x && path[counter2].y == end.y)
+                                                        clearInterval(inter4);
+                                                    counter2++;
+                                                }, $("#slider").val());
                                             }
                                         }
                                         counter++;
@@ -793,10 +809,9 @@
                 $("#environment").val("eeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee");
             }
             function setGameify() {
-                gameify = true;
                 if(canGo) {
                     if(tileSize > 20) {
-                        isGameify = true;
+                        gameify = true;
                         for(var i = 0; i < environment.length; i++) {
                             for(var j = 0; j < environment[i].length; j++) {
                                 if(environment[i][j].isWall) {
