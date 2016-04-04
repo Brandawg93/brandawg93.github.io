@@ -375,7 +375,96 @@
             		return result;
             	}
             };
-                        
+
+            path2 = {
+                search: function(heuristic, start, end) {
+                    var openList = [];
+                    var best = [];
+                    openList.push(start);
+                    while(true) {
+                        var temp = openList.pop();
+                        var neighbors = path2.neighbors(temp);
+                        neighbors = neighbors.filter(function(e) {
+                            return e.isWall != true;
+                        });
+                        if(neighbors.length > 1) {
+                            neighbors = neighbors.filter(function(e) {
+                                return e.visitedTwice != true;
+                            });
+                        }
+                        if(neighbors[0] == null) {
+                            return [];
+                        }
+                        var bestNode = neighbors[0];
+                        if(heuristic == "Euclidean")
+                            var bestNodeCount = path2.euclidean(neighbors[0].indexX, neighbors[0].indexY, end.indexX, end.indexY);
+                        else if(heuristic == "Manhattan")
+                            var bestNodeCount = path2.manhattan(neighbors[0].indexX, neighbors[0].indexY, end.indexX, end.indexY);
+                        else if(heuristic == "Diagonal")
+                            var bestNodeCount = path2.diagonal(neighbors[0].indexX, neighbors[0].indexY, end.indexX, end.indexY);
+                        for(var i = 1; i < neighbors.length; i++) {
+                            if(heuristic == "Euclidean") {
+                                if(path2.euclidean(neighbors[i].indexX, neighbors[i].indexY, end.indexX, end.indexY) < bestNodeCount) {
+                                    bestNodeCount = path2.euclidean(neighbors[i].indexX, neighbors[i].indexY, end.indexX, end.indexY);
+                                    bestNode = neighbors[i];
+                                }
+                            } else if(heuristic == "Manhattan") {
+                                if(path2.manhattan(neighbors[i].indexX, neighbors[i].indexY, end.indexX, end.indexY) < bestNodeCount) {
+                                    bestNodeCount = path2.manhattan(neighbors[i].indexX, neighbors[i].indexY, end.indexX, end.indexY);
+                                    bestNode = neighbors[i];
+                                }
+                            } else if(heuristic == "Diagonal") {
+                                if(path2.diagonal(neighbors[i].indexX, neighbors[i].indexY, end.indexX, end.indexY) < bestNodeCount) {
+                                    bestNodeCount = path2.diagonal(neighbors[i].indexX, neighbors[i].indexY, end.indexX, end.indexY);
+                                    bestNode = neighbors[i];
+                                }
+                            }
+                        }
+                        if(bestNode.visited)
+                            bestNode.visitedTwice = true;
+                        bestNode.visited = true;
+                        //stroke(bestNode.x, bestNode.y, "yellow");
+                        best.push(bestNode);
+                        openList.push(bestNode);
+                        if(bestNode.indexX == end.indexX && bestNode.indexY == end.indexY) {
+                            return best;
+                        }
+                    }
+                },
+                neighbors: function(node) {
+                    var result = [];
+                    var x = node.indexX;
+                    var y = node.indexY;
+                    if(environment[x - 1] && environment[x - 1][y]) {
+                        result.push(environment[x - 1][y]);
+                    }
+                    if(environment[x + 1] && environment[x + 1][y]) {
+                        result.push(environment[x + 1][y]);
+                    }
+                    if(environment[x][y - 1] && environment[x][y - 1]) {
+                        result.push(environment[x][y - 1]);
+                    }
+                    if(environment[x][y + 1] && environment[x][y + 1]) {
+                        result.push(environment[x][y + 1]);
+                    }
+                    return result;
+                },
+                manhattan: function(x1, y1, x2, y2) {
+                    var d1 = Math.abs(x2 - x1);
+                    var d2 = Math.abs(y2 - y1);
+                    return d1 + d2;
+                },
+                euclidean: function(x1, y1, x2, y2) {
+                    var d1 = Math.abs(x2 - x1);
+                    var d2 = Math.abs(y2 - y1);
+                    return Math.round(Math.sqrt(Math.pow(d2, 2) + Math.pow(d1, 2)) * 10) / 10;
+                },
+                diagonal: function (x1, y1, x2, y2) {
+                    var d1 = Math.abs(x2 - x1);
+                    var d2 = Math.abs(y2 - y1);
+                    return Math.round((d1 + d2) + (1.4 - 2) * Math.min(d1, d2));
+                }
+            };          
             function node() {
                 this.f = 0;
                 this.g = 0;
@@ -387,6 +476,8 @@
                 this.isWall = false;
                 this.indexX = 0;
                 this.indexY = 0;
+                this.visited = false;
+                this.visitedTwice = false;
             }
 
             function init() {
@@ -493,17 +584,49 @@
                     var algorithm = $("#algorithm").val();
                     var heuristic = $("#heuristic").val();
                     $("#theRest").slideUp();
-                    path = paths.search(algorithm, heuristic, start, end);
-                    $("#results").slideDown();
-                    if(path.length == 0) {
-                        $("#numSteps").text("None");
-                        $("#finalLength").text("None");
+                    if(algorithm == "Custom") {
+                        path = path2.search(heuristic, start, end);
+                        $("#results").slideDown();
+                        if(path.length == 0) {
+                            $("#numSteps").text("None");
+                            $("#finalLength").text("None");
+                        }
+                        else {
+                            $("#numSteps").text(path.length);
+                            $("#finalLength").text(path.length * 10);
+                        }                   
+                        var counter = 0;
+                        var inter2 = setInterval(function() {
+                            if(play || stepF) {
+                                if(path[0] != null) {
+                                    stroke(path[counter].x, path[counter].y, "teal");
+                                    if(counter == path.length - 1) {
+                                        clearInterval(inter2);
+                                        for(var i = 0; i < path.length; i++) {
+                                            stroke(path[i].x, path[i].y, "yellow");
+                                        }
+                                    }
+                                    counter++;
+                                } else {
+                                    clearInterval(inter2);
+                                    alert("Something went wrong with the custom algorithm!");
+                                }
+                                stepF = false;
+                            }
+                        }, $("#slider").val());
+                    } else {
+                        path = paths.search(algorithm, heuristic, start, end);
+                        $("#results").slideDown();
+                        if(path.length == 0) {
+                            $("#numSteps").text("None");
+                            $("#finalLength").text("None");
+                        }
+                        else {
+                            $("#numSteps").text(path.length);
+                            $("#finalLength").text(path.length * 10);
+                        }                   
+                        paths.step(algorithm, heuristic, start, end);
                     }
-                    else {
-                        $("#numSteps").text(path.length);
-                        $("#finalLength").text(path.length * 10);
-                    }                   
-                    paths.step(algorithm, heuristic, start, end);
                 }
             }
             
@@ -639,6 +762,7 @@
                         <option default selected>A Star</option>
                         <option>Dijkstra</option>
                         <option>Best First</option>
+                        <option>Custom</option>
                     </select>
                     <h3>Please select heuristic.</h3>
                     <select id="heuristic">
