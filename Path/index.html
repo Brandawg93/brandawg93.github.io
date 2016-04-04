@@ -21,6 +21,8 @@
             var path;
             var interval;
             var inter2;
+            var inter3;
+            var gameify = false;
             
             var paths = {
             	search: function(algorithm, heuristic, start, end) {
@@ -191,6 +193,20 @@
                                     stroke(path[counter].x, path[counter].y, "yellow");
                                 }
                                 clearInterval(interval);
+                                if(gameify) {
+                                    var counter = 0;
+                                    var temp = result;
+                                    inter3 = setInterval(function () {
+                                        drawPic("player", temp[counter].x, temp[counter].y, tileSize);
+                                        if(counter == 0)
+                                            drawPic("floor", start.x, start.y, tileSize);
+                                        else
+                                            drawPic("floor", temp[counter-1].x, temp[counter-1].y, tileSize);
+                                        if(temp[counter].x == end.x && temp[counter].y == end.y)
+                                            clearInterval(inter3);
+                                        counter ++;
+                                    }, $("#slider").val());
+                                }
                                 return result.reverse();
                             }
                  
@@ -494,6 +510,9 @@
             }
 
             function init() {
+                gameify = false;
+                if(inter3 != null)
+                    clearInterval(inter3);
                 if(interval != null)
                     clearInterval(interval);
                 if(inter2 != null)
@@ -723,7 +742,7 @@
                 }
             }
             function drawText(text, x, y) {
-                if(tileSize > 70) {
+                if(tileSize > 70 && !gameify) {
                     ctx.font = fontSize.toString() + "px Arial";
                     ctx.fillStyle = "white";
                     ctx.fillText(text,x,y);
@@ -764,6 +783,43 @@
                     $("#heuristic").val("Euclidean");
                 }
             }
+            function doDefault1() {
+                $("#environment").val("eeeeeeee\neeeeoeee\neeeeoeee \neeeeoeee \neeeeeeee \neeeeeeee");
+            }
+            function doDefault2() {
+                $("#environment").val("eeeeeeee\neeeoeoee\neeeoeoee \neeeoooee \neeeeeeee \neeeeeeee");
+            }
+            function doDefault3() {
+                $("#environment").val("eeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee");
+            }
+            function setGameify() {
+                gameify = true;
+                if(canGo) {
+                    if(tileSize > 20) {
+                        isGameify = true;
+                        for(var i = 0; i < environment.length; i++) {
+                            for(var j = 0; j < environment[i].length; j++) {
+                                if(environment[i][j].isWall) {
+                                    drawPic("tile", environment[i][j].x, environment[i][j].y, tileSize);
+                                } else {
+                                    drawPic("floor", environment[i][j].x, environment[i][j].y, tileSize);
+                                }
+                                if(environment[i][j].x == start.x && environment[i][j].y == start.y) {
+                                    drawPic("player", environment[i][j].x, environment[i][j].y, tileSize);
+                                } else if(environment[i][j].x == end.x && environment[i][j].y == end.y) {
+                                    drawPic("princess", environment[i][j].x, environment[i][j].y, tileSize);
+                                }
+                            }
+                        }
+                    } else {
+                        alert("Too small to Gameify!");
+                    }
+                }
+            }
+            function drawPic(name, x, y, tileSize) {
+                var img = document.getElementById(name);
+                ctx.drawImage(img,x,y,tileSize,tileSize);
+            }
         </script>
     </head>
     <body>
@@ -775,10 +831,14 @@
             <div style="border:solid;">
                 <h3 id="gTitle">Environment</h3>
                 <textarea id="environment" placeholder="Enter environment here..."></textarea>
-                <div id="envButtons">
-                    <button id="submit" onclick="init();">Submit</button>
+                <div id="defaultButtons">
+                    <button id="default1" onclick="doDefault1();">Default 1</button>
+                    <button id="default1" onclick="doDefault2();">Default 2</button>
+                    <button id="default1" onclick="doDefault3();">Default 3</button>
                     <button id="random" onclick="generate();">Random</button>
                 </div>
+                <br />
+                <button id="submit" onclick="init();">Submit</button>
                 <h3 id="infoStart">Please select a start position.</h3>
                 <br />
                 <h3 id="infoEnd">Please select an end position.</h3>
@@ -800,6 +860,7 @@
                     <h3 id="speed">Speed</h3>
                     <input id="slider" type="range"  max="3000" value="500">
                     <br />
+                    <button id="gameify" onclick="setGameify();">GAMEIFY!</button>
                     <button id="go" onclick="beginpaths();">GO!</button>
                 </div>
                 <div id="results">
@@ -816,5 +877,9 @@
                 </div>
             </div>
         </div>
+        <img id="floor" src="floor.png"></img>
+        <img id="tile" src="tile.png"></img>
+        <img id="player" src="player2.png"></img>
+        <img id="princess" src="princess.png"></img>
     </body>
 </html>
