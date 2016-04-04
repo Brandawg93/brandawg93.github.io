@@ -20,6 +20,7 @@
             var canGo = false;
             var path;
             var interval;
+            var inter2;
             
             var paths = {
             	search: function(algorithm, heuristic, start, end) {
@@ -423,10 +424,10 @@
                         if(bestNode.visited)
                             bestNode.visitedTwice = true;
                         bestNode.visited = true;
-                        //stroke(bestNode.x, bestNode.y, "yellow");
                         best.push(bestNode);
                         openList.push(bestNode);
                         if(bestNode.indexX == end.indexX && bestNode.indexY == end.indexY) {
+                            var temp = [];
                             return best;
                         }
                     }
@@ -483,6 +484,8 @@
             function init() {
                 if(interval != null)
                     clearInterval(interval);
+                if(inter2 != null)
+                    clearInterval(inter2);
                 mouseClicks = 0;
                 $("#infoStart").slideDown();
                 $("#infoEnd").slideDown();
@@ -596,7 +599,7 @@
                             $("#finalLength").text(path.length * 10);
                         }                   
                         var counter = 0;
-                        var inter2 = setInterval(function() {
+                        inter2 = setInterval(function() {
                             if(play || stepF) {
                                 if(path[0] != null) {
                                     stroke(path[counter].x, path[counter].y, "teal");
