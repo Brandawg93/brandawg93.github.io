@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title>Path</title>
+        <title>Path Planning</title>
         <link rel="stylesheet" type="text/css" href="main.css">
         <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
         <script type="text/javascript">
@@ -31,7 +31,6 @@
             		var closedList = [];
             		openList.push(start);
             		while(openList.length > 0) {
-             
             			var lowest = 0;
             			for(var i = 0; i < openList.length; i++) {
             				if(openList[i].f < openList[lowest].f)
@@ -175,7 +174,6 @@
                     openList.push(start);
                     interval = setInterval(function() {
                         if(play || stepF) {
-                     
                             var lowest = 0;
                             for(var i = 0; i < openList.length; i++) {
                                 if(openList[i].f < openList[lowest].f)
@@ -196,14 +194,13 @@
                                 clearInterval(interval);
                                 if(gameify) {
                                     var counter = 0;
-                                    var temp = result;
                                     inter3 = setInterval(function () {
-                                        drawPic("player", temp[counter].x, temp[counter].y, tileSize);
+                                        drawPic("player", result[counter].x, result[counter].y, tileSize);
                                         if(counter == 0)
                                             drawPic("floor", start.x, start.y, tileSize);
                                         else
-                                            drawPic("floor", temp[counter-1].x, temp[counter-1].y, tileSize);
-                                        if(temp[counter].x == end.x && temp[counter].y == end.y)
+                                            drawPic("floor", result[counter-1].x, result[counter-1].y, tileSize);
+                                        if(result[counter].x == end.x && result[counter].y == end.y)
                                             clearInterval(inter3);
                                         counter ++;
                                     }, $("#slider").val());
@@ -521,8 +518,8 @@
                 if(inter2 != null)
                     clearInterval(inter2);
                 mouseClicks = 0;
-                $("#playAndPause").html('Pause');
                 play = true;
+                $("#playAndPause").html('Pause');
                 $("#infoStart").slideDown();
                 $("#infoEnd").slideDown();
                 $("#theRest").slideDown();
@@ -531,156 +528,81 @@
                 //get largest side
                 var curr = 0;
                 for(var i = 0; i < environment.length; i++) {
-                    for(var j = 0; j < environment[i].length; j++) {
-                        if(environment[i].length > curr) {
-                            curr = environment[i].length;
-                        }
+                    if(environment[i].length > curr) {
+                        curr = environment[i].length;
                     }
-                    if(environment.length > curr) {
-                        curr = environment.length;
-                    }
+                }
+                if(environment.length > curr) {
+                    curr = environment.length;
                 }
                 ctx = document.getElementById('canvas').getContext('2d');
                 WIDTH = ctx.canvas.width;
                 HEIGHT = ctx.canvas.height;
-                tileSize = Math.round(WIDTH/curr);
+                tileSize = Math.round(WIDTH/curr) - 1;
                 fontSize = Math.floor(tileSize/10);
                 if(inits == 0) {
                     document.addEventListener("mousedown", function(e){
-                        mouseX = e.pageX - ctx.canvas.getBoundingClientRect().left;
-                        mouseY = e.pageY - ctx.canvas.getBoundingClientRect().top;
-                        //console.log(x + " " + y);
-                        var canPut = true;
-                        var isValid = false;
-                        for(var i = 0; i < environment.length; i ++) {
-                            for(var j = 0; j < environment[i].length; j++) {
-                                if(environment[i][j].val == 1) {
-                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
-                                        canPut = false;
-                                        x = environment[i][j].x;
-                                        y = environment[i][j].y;
-                                    }
-                                } else if(environment[i][j].val == 0) {
-                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
-                                        isValid = true;
-                                        x = environment[i][j].x;
-                                        y = environment[i][j].y;
-                                    }
-                                }
-                            }
-                        }
-                        if(canPut && isValid) {
-                            if(mouseClicks == 0) {
-                                $("#infoStart").slideUp();
-                                rect(x, y, "green");
-                                start = new node();
-                                start.f = 0;
-                                start.g = 0;
-                                start.h = 0;
-                                start.parent = null;
-                                start.x = x;
-                                start.y = y;
-                                for (var i = 0; i < environment.length; i++) {
-                                    for (var j = 0; j < environment[i].length; j++) {
-                                        if(environment[i][j].x == x && environment[i][j].y == y) {
-                                            start.indexX = environment[i][j].indexX;
-                                            start.indexY = environment[i][j].indexY;
-                                        }
-                                    }
-                                }
-                            }
-                            else if(mouseClicks == 1) {
-                                $("#infoEnd").slideUp();
-                                canGo = true;
-                                rect(x, y, "red");
-                                end = new node();
-                                end.f = 0;
-                                end.g = 0;
-                                end.h = 0;
-                                end.parent = null;
-                                end.x = x;
-                                end.y = y;
-                                for (var i = 0; i < environment.length; i++) {
-                                    for (var j = 0; j < environment[i].length; j++) {
-                                        if(environment[i][j].x == x && environment[i][j].y == y) {
-                                            end.indexX = environment[i][j].indexX;
-                                            end.indexY = environment[i][j].indexY;
-                                        }
-                                    }
-                                }
-                            }
-                            mouseClicks++;
-                        }
+                        doAddEventListener(e);
                     });
                     document.addEventListener("touchend", function(e){
-                        mouseX = e.pageX - ctx.canvas.getBoundingClientRect().left;
-                        mouseY = e.pageY - ctx.canvas.getBoundingClientRect().top;
-                        //console.log(x + " " + y);
-                        var canPut = true;
-                        var isValid = false;
-                        for(var i = 0; i < environment.length; i ++) {
-                            for(var j = 0; j < environment[i].length; j++) {
-                                if(environment[i][j].val == 1) {
-                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
-                                        canPut = false;
-                                        x = environment[i][j].x;
-                                        y = environment[i][j].y;
-                                    }
-                                } else if(environment[i][j].val == 0) {
-                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
-                                        isValid = true;
-                                        x = environment[i][j].x;
-                                        y = environment[i][j].y;
-                                    }
-                                }
-                            }
-                        }
-                        if(canPut && isValid) {
-                            if(mouseClicks == 0) {
-                                $("#infoStart").slideUp();
-                                rect(x, y, "green");
-                                start = new node();
-                                start.f = 0;
-                                start.g = 0;
-                                start.h = 0;
-                                start.parent = null;
-                                start.x = x;
-                                start.y = y;
-                                for (var i = 0; i < environment.length; i++) {
-                                    for (var j = 0; j < environment[i].length; j++) {
-                                        if(environment[i][j].x == x && environment[i][j].y == y) {
-                                            start.indexX = environment[i][j].indexX;
-                                            start.indexY = environment[i][j].indexY;
-                                        }
-                                    }
-                                }
-                            }
-                            else if(mouseClicks == 1) {
-                                $("#infoEnd").slideUp();
-                                canGo = true;
-                                rect(x, y, "red");
-                                end = new node();
-                                end.f = 0;
-                                end.g = 0;
-                                end.h = 0;
-                                end.parent = null;
-                                end.x = x;
-                                end.y = y;
-                                for (var i = 0; i < environment.length; i++) {
-                                    for (var j = 0; j < environment[i].length; j++) {
-                                        if(environment[i][j].x == x && environment[i][j].y == y) {
-                                            end.indexX = environment[i][j].indexX;
-                                            end.indexY = environment[i][j].indexY;
-                                        }
-                                    }
-                                }
-                            }
-                            mouseClicks++;
-                        }
+                        doAddEventListener(e);
                     });
                 }
                 inits++;
                 draw();
+            }
+
+            function doAddEventListener(e) {
+                mouseX = e.pageX - ctx.canvas.getBoundingClientRect().left;
+                mouseY = e.pageY - ctx.canvas.getBoundingClientRect().top;
+                //console.log(x + " " + y);
+                var canPut = true;
+                var isValid = false;
+                var envIndexX = 0;
+                var envIndexY = 0;
+                for(var i = 0; i < environment.length; i ++) {
+                    for(var j = 0; j < environment[i].length; j++) {
+                        if(environment[i][j].val == 1) {
+                            if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
+                                canPut = false;
+                                x = environment[i][j].x;
+                                y = environment[i][j].y;
+                                envIndexX = environment[i][j].indexX;
+                                envIndexY = environment[i][j].indexY;
+                            }
+                        } else if(environment[i][j].val == 0) {
+                            if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
+                                isValid = true;
+                                x = environment[i][j].x;
+                                y = environment[i][j].y;
+                                envIndexX = environment[i][j].indexX;
+                                envIndexY = environment[i][j].indexY;
+                            }
+                        }
+                    }
+                }
+                if(canPut && isValid) {
+                    if(mouseClicks == 0) {
+                        $("#infoStart").slideUp();
+                        rect(x, y, "green");
+                        start = new node();
+                        start.x = x;
+                        start.y = y;
+                        start.indexX = envIndexX;
+                        start.indexY = envIndexY;
+                    }
+                    else if(mouseClicks == 1) {
+                        $("#infoEnd").slideUp();
+                        canGo = true;
+                        rect(x, y, "red");
+                        end = new node();
+                        end.x = x;
+                        end.y = y;
+                        end.indexX = envIndexX;
+                        end.indexY = envIndexY;
+                    }
+                    mouseClicks++;
+                }
             }
             
             function beginpaths() {
