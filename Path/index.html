@@ -612,6 +612,72 @@
                             mouseClicks++;
                         }
                     });
+                    document.addEventListener("touchend", function(e){
+                        mouseX = e.pageX - ctx.canvas.getBoundingClientRect().left;
+                        mouseY = e.pageY - ctx.canvas.getBoundingClientRect().top;
+                        //console.log(x + " " + y);
+                        var canPut = true;
+                        var isValid = false;
+                        for(var i = 0; i < environment.length; i ++) {
+                            for(var j = 0; j < environment[i].length; j++) {
+                                if(environment[i][j].val == 1) {
+                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
+                                        canPut = false;
+                                        x = environment[i][j].x;
+                                        y = environment[i][j].y;
+                                    }
+                                } else if(environment[i][j].val == 0) {
+                                    if(mouseX > environment[i][j].x && mouseX < environment[i][j].x + tileSize && mouseY > environment[i][j].y && mouseY < environment[i][j].y + tileSize) {
+                                        isValid = true;
+                                        x = environment[i][j].x;
+                                        y = environment[i][j].y;
+                                    }
+                                }
+                            }
+                        }
+                        if(canPut && isValid) {
+                            if(mouseClicks == 0) {
+                                $("#infoStart").slideUp();
+                                rect(x, y, "green");
+                                start = new node();
+                                start.f = 0;
+                                start.g = 0;
+                                start.h = 0;
+                                start.parent = null;
+                                start.x = x;
+                                start.y = y;
+                                for (var i = 0; i < environment.length; i++) {
+                                    for (var j = 0; j < environment[i].length; j++) {
+                                        if(environment[i][j].x == x && environment[i][j].y == y) {
+                                            start.indexX = environment[i][j].indexX;
+                                            start.indexY = environment[i][j].indexY;
+                                        }
+                                    }
+                                }
+                            }
+                            else if(mouseClicks == 1) {
+                                $("#infoEnd").slideUp();
+                                canGo = true;
+                                rect(x, y, "red");
+                                end = new node();
+                                end.f = 0;
+                                end.g = 0;
+                                end.h = 0;
+                                end.parent = null;
+                                end.x = x;
+                                end.y = y;
+                                for (var i = 0; i < environment.length; i++) {
+                                    for (var j = 0; j < environment[i].length; j++) {
+                                        if(environment[i][j].x == x && environment[i][j].y == y) {
+                                            end.indexX = environment[i][j].indexX;
+                                            end.indexY = environment[i][j].indexY;
+                                        }
+                                    }
+                                }
+                            }
+                            mouseClicks++;
+                        }
+                    });
                 }
                 inits++;
                 draw();
