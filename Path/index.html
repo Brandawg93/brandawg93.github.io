@@ -456,7 +456,25 @@
                         best.push(bestNode);
                         openList.push(bestNode);
                         if(bestNode.indexX == end.indexX && bestNode.indexY == end.indexY) {
-                            return best;
+                            var result = [];
+                            $.each(best, function(i, e) {
+                                if ($.inArray(e, result) == -1) result.push(e);
+                            });
+                            var notNeeded = [];
+                            for(var i = 0; i < result.length; i++) {
+                                var n = path2.neighbors(result[i]);
+                                var walls = 0;
+                                for(var j = 0; j < n.length; j++) {
+                                    if(n[j].isWall)
+                                        walls++;
+                                }
+                                if(walls == 3)
+                                    notNeeded.push(result[i]);
+                            }
+                            for(var i = 0; i < notNeeded.length; i++) {
+                                result.splice(result.indexOf(notNeeded[i]),1);
+                            }
+                            return result;
                         }
                     }
                 },
