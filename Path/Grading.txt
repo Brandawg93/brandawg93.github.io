@@ -1,0 +1,32 @@
+Brandon McFarlin
+CSCI 4070
+Project 3
+Grading
+
+Begin Default Map (3 defaults): has three default maps
+Final Values F(x), H(x), and G(x): shown on all larger maps
+Final Path Drawn: displayed in yellow
+Final Length & #Steps Displayed: displayed under instructions
+Efficency Smooth Anim: animates through algorithm
+Contral Speed of Animation: slider in instructions
+At Least Size of 500  cells support (size configurable): can handle more than 500
+Configurable Environmental Obstacles  placement: textarea for environment
+Goal (x,y) Configurable placement: mouse click to select goal
+Start (x, y) Configurable placement: mouse click to select start
+Provide a Stepped Speed: at bottom of instructions
+Report w/  screen shots or Video: have screen shots and report
+Quality Craftmanship: well crafted
+Grading.txt: this
+3 Tests for Correctness: up to you
+Readme.txt: has readme
+Demo (MH): done demo
+Game like look  (you'll need to craft  Sprites & Tiles): click gameify for game look
+
+Embellishments:
+Compare to Dijkstra: 5
+Compare to Best First: 5
+Euclidean heuristic: 5
+Diagonal heuristic: 5
+Support > 1k cells: 10
+Works on mobile: ?
+Created custom searching algorithm: ?
