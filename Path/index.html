@@ -169,6 +169,7 @@
             		return [];
             	},
                 step: function(algorithm, heuristic, start, end) {
+                    //This is what shows the animations
                     var openList = [];
                     var closedList = [];
                     openList.push(start);
@@ -188,8 +189,8 @@
                                     result.push(curr);
                                     curr = curr.parent;
                                 }
-                                for(var counter = 0; counter < path.length; counter++) {
-                                    stroke(path[counter].x, path[counter].y, "yellow");
+                                for(var counter = 0; counter < result.length; counter++) {
+                                    stroke(result[counter].x, result[counter].y, "yellow");
                                 }
                                 clearInterval(interval);
                                 if(gameify) {
@@ -391,6 +392,7 @@
             	}
             };
 
+            //This is my custom searching algorithm (closest-best)
             path2 = {
                 search: function(heuristic, start, end) {
                     var openList = [];
@@ -491,7 +493,8 @@
                     var d2 = Math.abs(y2 - y1);
                     return Math.round((d1 + d2) + (1.4 - 2) * Math.min(d1, d2));
                 }
-            };          
+            };
+            //The node structure        
             function node() {
                 this.f = 0;
                 this.g = 0;
@@ -526,14 +529,11 @@
                 $("#results").slideUp();
                 environment = getMap();
                 //get largest side
-                var curr = 0;
+                var curr = environment.length;
                 for(var i = 0; i < environment.length; i++) {
                     if(environment[i].length > curr) {
                         curr = environment[i].length;
                     }
-                }
-                if(environment.length > curr) {
-                    curr = environment.length;
                 }
                 ctx = document.getElementById('canvas').getContext('2d');
                 WIDTH = ctx.canvas.width;
@@ -551,11 +551,11 @@
                 inits++;
                 draw();
             }
-
+            
+            //Creates mouse and touch events
             function doAddEventListener(e) {
                 mouseX = e.pageX - ctx.canvas.getBoundingClientRect().left;
                 mouseY = e.pageY - ctx.canvas.getBoundingClientRect().top;
-                //console.log(x + " " + y);
                 var canPut = true;
                 var isValid = false;
                 var envIndexX = 0;
@@ -678,6 +678,7 @@
                 }
             }
             
+            //gets the map from the textarea
             function getMap() {
                 var temp = $("#environment").val()
                 var array = [];
@@ -698,9 +699,11 @@
                 }
                 return array;
             }
+            //clear screen
             function clear() {
                 ctx.clearRect(0, 0, WIDTH, HEIGHT);
             }
+            //draw square
             function rect(x,y, color) {
                 ctx.beginPath();
                 ctx.fillStyle = color;
@@ -708,6 +711,7 @@
                 ctx.closePath();
                 ctx.fill();
             }
+            //stroke square
             function stroke(x, y, color) {
                 ctx.beginPath();
                 ctx.strokeStyle = color;
@@ -722,6 +726,7 @@
                 ctx.stroke();
                 ctx.closePath();
             }
+            //initially draws grid
             function draw() {
                 clear();
                 var x = 0;
@@ -748,6 +753,7 @@
                     y += tileSize;
                 }
             }
+            //draws text
             function drawText(text, x, y) {
                 if(tileSize > 70 && !gameify) {
                     ctx.font = fontSize.toString() + "px Arial";
@@ -755,22 +761,22 @@
                     ctx.fillText(text,x,y);
                 }
             }
+            //generates random 100x100 grid
             function generate() {
                 var temp = "";
                 $("#slider").val(0);
                 for(var i = 0; i < 100; i++) {
                     for(var j = 0; j < 100; j++) {
-                        if(Math.floor((Math.random() * 10) + 1) < 3) {
+                        if(Math.floor((Math.random() * 10) + 1) < 3)
                             temp += "o";
-                        }
-                        else {
+                        else
                             temp += "e";
-                        }
                     }
                     temp += "\n";
                 }
                 $("#environment").val(temp);
             }
+            //handles the play/pause button
             function setPlay() {
                 if($("#playAndPause").html() == "Pause") {
                     $("#playAndPause").html('&nbsp;Play&nbsp;&nbsp;');
@@ -779,26 +785,32 @@
                 }
                 play = !play;
             }
+            //handles stepping forward
             function stepForward() {
                 stepF = true;
             }
             function stepBackward() {
                 stepB = true;
             }
+            //changes algorithm
             function handleChange() {
                 if($("#algorithm").val() == "Custom") {
                     $("#heuristic").val("Euclidean");
                 }
             }
+            //sets grid to first defautl map
             function doDefault1() {
                 $("#environment").val("eeeeeeee\neeeeoeee\neeeeoeee \neeeeoeee \neeeeeeee \neeeeeeee");
             }
+            //sets grid to second defautl map
             function doDefault2() {
                 $("#environment").val("eeeeeeee\neeeoeoee\neeeoeoee \neeeoooee \neeeeeeee \neeeeeeee");
             }
+            //sets grid to third defautl map
             function doDefault3() {
                 $("#environment").val("eeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee\neeeeeeee\neeeeoeee\neeeeoeee\neeeeoeee\neeeeeeee\neeeeeeee");
             }
+            //makes tiles look like game
             function setGameify() {
                 if(canGo) {
                     if(tileSize > 20) {
@@ -822,6 +834,7 @@
                     }
                 }
             }
+            //draws the game pictures
             function drawPic(name, x, y, tileSize) {
                 var img = document.getElementById(name);
                 ctx.drawImage(img,x,y,tileSize,tileSize);
