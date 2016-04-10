@@ -545,6 +545,7 @@
                 $("#infoEnd").slideDown();
                 $("#theRest").slideDown();
                 $("#results").slideUp();
+                $("#buttons").slideUp();
                 environment = getMap();
                 //get largest side
                 var curr = environment.length;
@@ -628,6 +629,7 @@
                     canGo = false;
                     var algorithm = $("#algorithm").val();
                     var heuristic = $("#heuristic").val();
+                    $("#buttons").slideDown();
                     $("#theRest").slideUp();
                     if(algorithm == "Custom") {
                         if(heuristic == "Manhattan") {
