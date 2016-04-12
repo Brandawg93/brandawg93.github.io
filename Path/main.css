@@ -19,7 +19,7 @@ h2 {
     height: 100px;
 }
 #buttons {
-    display: inline-block;
+    display: none;
     margin-left: 30%;
 }
 #submit {
