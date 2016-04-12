@@ -2,6 +2,8 @@ Brandon McFarlin
 CSCI 4070
 Project 3 Readme
 
+NOTE: My project DOES NOT show the fastest path with diagonals.  Professor Hybinette said this was fine.
+
 Required Files:
 floor.pngindex.htmlmain.cssmediaplayer2.pngprincess.pngtile.png
 
