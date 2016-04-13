@@ -27,6 +27,6 @@ Compare to Dijkstra: 5
 Compare to Best First: 5
 Euclidean heuristic: 5
 Diagonal heuristic: 5
-Support > 1k cells: 10
-Works on mobile: ?
-Created custom searching algorithm: ?
+Support > 10k cells: 10
+Works on mobile: 5
+Created custom searching algorithm: 15
