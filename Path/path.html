@@ -860,10 +860,10 @@
                 ctx.drawImage(img,x,y,tileSize,tileSize);
             }
             $(document).ready(function() {
-                console.log(screen.width);
-                if ( screen.width < 800 ) {
+                //if ( screen.width < 800 ) {
+                if($(window).width() < 800) {
                     $('#sidebar').hide();
-                    console.log("small");
+                    $('head').append('<meta name="viewport" content="width=device-width, initial-scale=1"/>');
                 };
             });
         </script>
